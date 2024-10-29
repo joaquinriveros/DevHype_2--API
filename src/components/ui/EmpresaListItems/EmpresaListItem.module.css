@@ -1,0 +1,42 @@
+.item__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: 2px solid var(--borderGray-color);
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  gap: 1rem;
+
+  /* gradiant */
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.item__tittle {
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+.item__buttonContainer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.item__btOption {
+  border: 2px solid var(--white-color);
+  height: 2rem;
+  width: 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  background: none;
+  font-size: small;
+  color: var(--gray-color);
+}

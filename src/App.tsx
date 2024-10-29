@@ -1,5 +1,11 @@
-export const App = () => {
+import { Empresa } from './components/screens/Empresa/Empresa'
+
+function App() {
   return (
-    <div>App</div>
+    <>
+    <Empresa/>
+    </>
   )
 }
+
+export default App

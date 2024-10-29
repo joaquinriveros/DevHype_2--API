@@ -1,0 +1,109 @@
+.empresa__container {
+    min-height: 100vh; 
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+/* Aside */
+.empresa__aside{
+    background-color: var(--primaryBlue-color);
+    color: var(--white-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+.empresa__listContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+/* contenido principal */
+.empresa__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%; 
+    background: var(--secondaryBlue-color);
+    color: var(--white-color);
+}
+
+.empresa__header {
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.empresa__tittleContainer{
+    width: 100%;
+}
+.empresa__tittle {
+   font-size: 1.5rem;
+   text-align: center;
+}
+.empresa__bottonContainer{
+    width: 15rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.empresa__button{
+    width: 10rem;
+    color:var(--red-color);
+    border: solid 1px var(--red-color);
+    border-radius: .4rem;
+    background-color: rgba(255, 0, 0, 0.087);
+    text-transform: uppercase;
+    font-size: small;
+    padding: .2rem;
+
+}
+
+/* Cards container */
+.empresa__content{
+    height: 100%;
+    width: 100%;
+    background-color: var(--bgBlue-color); 
+}
+
+.empresa__cardsContainer{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 2rem;
+    gap: 2rem;
+}
+@media( min-width: 768px) {
+    .empresa__cardsContainer{
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* pupUp */
+.overlay {
+    position: fixed; /* Ocupa toda la pantalla */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que el overlay esté por encima de otros elementos */
+}
+
+.popup {
+    background: #0E1E3F; /* Fondo blanco para el formulario */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    width: 90%; /* O un valor específico en px */
+    max-width: 500px; /* Tamaño máximo del formulario */
+    position: relative; /* Posición relativa para el cierre */
+}
