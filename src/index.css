@@ -1,0 +1,33 @@
+:root {
+  --primaryBlue-color: #0a101e;
+  --secondaryBlue-color: #0f1523;
+  --bgBlue-color: #030712;
+
+  --white-color: #fff;
+  --black-color: #000;
+  --gray-color: #cecece;
+  --red-color: #ff0000;
+  --borderGray-color: #60606064;
+}
+/* Globals */
+a{
+  text-decoration: none;
+}
+h1, h2, h3 ,h4{
+  line-height: 1.2;
+}
+h1{
+  font-size: 4.8rem;
+}
+h2{
+  font-size: 4rem;
+}
+h3{
+  font-size: 3.2rem;
+}
+h4{
+  font-size: 2.8rem;
+}
+img{
+  max-width: 100%;
+}
