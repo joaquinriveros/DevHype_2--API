@@ -15,9 +15,7 @@ export const Empresa = () => {
       <div className={styles.empresa__container}>
         {isFormVisible && (
           <div className={styles.overlay}>
-            <div className={styles.popup}>
-              <FormEmpresa onClose={closeForm} />
-            </div>
+            <FormEmpresa onClose={closeForm} />
           </div>
         )}
 

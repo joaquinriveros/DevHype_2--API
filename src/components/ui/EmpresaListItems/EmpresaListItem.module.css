@@ -22,6 +22,7 @@
 .item__tittle {
   font-size: 1.2em;
   text-transform: uppercase;
+  text-align: center;
 }
 .item__buttonContainer {
   display: flex;
