@@ -12,7 +12,7 @@ export const Empresa = () => {
 
   return (
     <>
-      <div className={styles.empresa__container}>
+      <div className={"aside-main__container"}>
         {isFormVisible && (
           <div className={styles.overlay}>
             <FormEmpresa onClose={closeForm} />
@@ -21,12 +21,15 @@ export const Empresa = () => {
 
         <aside className={styles.empresa__aside}>
           <h2>Empresa</h2>
-          <button className={styles.empresa__button} onClick={openForm}>
+          <button className='add__button' onClick={openForm}>
             Agregar Empresa
           </button>
           <div className={styles.empresa__listContainer}>
             <EmpresaListItem />
             <EmpresaListItem /> {/* Ejemplos de empresas */}
+            <EmpresaListItem />
+            <EmpresaListItem />
+            <EmpresaListItem />
             <EmpresaListItem />
             <EmpresaListItem />
             <EmpresaListItem />
@@ -39,7 +42,7 @@ export const Empresa = () => {
               <h2 className={styles.empresa__tittle}>Sucursales en: Nombre</h2>
             </div>
             <div className={styles.empresa__bottonContainer}>
-              <button className={styles.empresa__button}>
+              <button className='add__button'>
                 Agregar sucursal
               </button>
             </div>
