@@ -1,11 +1,7 @@
-import { Empresa } from './components/screens/Empresa/Empresa'
+import { AppRoutes } from "./routes/AppRoutes";
 
 function App() {
-  return (
-    <>
-    <Empresa/>
-    </>
-  )
+  return <AppRoutes />;
 }
 
-export default App
+export default App;

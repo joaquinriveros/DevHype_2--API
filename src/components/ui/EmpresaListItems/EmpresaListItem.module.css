@@ -29,15 +29,3 @@
   align-items: center;
   gap: 2rem;
 }
-
-.item__btOption {
-  border: 2px solid var(--white-color);
-  height: 2rem;
-  width: 2rem;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  background: none;
-  font-size: small;
-  color: var(--gray-color);
-}

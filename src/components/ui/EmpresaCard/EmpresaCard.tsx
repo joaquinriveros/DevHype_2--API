@@ -1,8 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import styles from "./EmpresaCard.module.css";
 
 export const EmpresaCard = () => {
+
+  const navigate = useNavigate();
+  const handleCategoriesNavigate = () => {
+    navigate(`/productos/idEjemplo`)
+  };
+
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={handleCategoriesNavigate}>
       <h3 className={styles.card__tittle}>Empresa</h3>
       <img
         src="https://www.unicenter.com.ar/files/get/2850"
