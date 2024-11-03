@@ -8,6 +8,8 @@
   --black-color: #000;
   --gray-color: #cecece;
   --red-color: #ff0000;
+  --redLite-color: #913939;
+  --green-color: #5eff68;
   --borderGray-color: #60606064;
 }
 /* Globals */
@@ -35,14 +37,21 @@ h4 {
 img {
   max-width: 100%;
 }
-th,td{
-  font-size: .8rem;
-  padding: .2rem;
+th,
+td {
+  font-size: 0.8rem;
+  padding: 0.2rem;
 }
 /* Ocultar la barra */
 html ::-webkit-scrollbar,
 .main::-webkit-scrollbar {
   display: none; /* Oculta la barra de desplazamiento */
+}
+button {
+  transition: all 0.2s;
+}
+button:hover {
+  transform: scale(1.05);
 }
 
 /* Utilities */
@@ -67,6 +76,16 @@ html ::-webkit-scrollbar,
   font-size: small;
   padding: 0.2rem;
 }
+.add__button-green {
+  width: 10rem;
+  color: var(--green-color);
+  border: solid 1px var(--green-color);
+  border-radius: 0.4rem;
+  background-color: rgba(51, 255, 0, 0.087);
+  text-transform: uppercase;
+  font-size: small;
+  padding: 0.2rem;
+}
 .gradiantStyle__button {
   width: 100%;
   padding: 0.2rem 1rem;
@@ -85,12 +104,12 @@ html ::-webkit-scrollbar,
   color: var(--gray-color);
   text-decoration: none;
   text-align: center;
-  transition: all 0.5s ease;
+  transition: all 0.2s ease;
 }
 .gradiantStyle__button option {
   background-color: var(--primaryBlue-color); /* Fondo de cada opción */
-  color: var(--gray-color);            /* Color del texto */
-  padding: 10px;             /* Espacio interno (en algunos navegadores no se aplica) */
+  color: var(--gray-color); /* Color del texto */
+  padding: 10px; /* Espacio interno (en algunos navegadores no se aplica) */
 }
 .boxStyle__icon {
   border: 2px solid var(--white-color);
@@ -114,5 +133,57 @@ html ::-webkit-scrollbar,
   font-size: small;
   color: var(--red-color);
   background-color: rgba(255, 0, 0, 0.087);
-
 }
+/* inpust */
+.form__inputText {
+  width: 100%;
+  padding: 0.2rem 1rem !important;
+  border: 2px solid var(--borderGray-color) !important;
+  color: var(--gray-color) !important;
+
+  border-radius: 0.5rem !important;
+
+  /* gradiant */
+  background: rgb(255, 255, 255) !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
+}
+.form__inputText::placeholder {
+  color: var(--borderGray-color) !important;
+}
+.form__inputText:focus {
+  border-color: var(--gray-color) !important;
+  box-shadow: none !important;
+}
+/* Fail */
+.form__inputText-fail {
+  width: 100%;
+  padding: 0.2rem 1rem !important;
+  border: 2px solid var(--red-color) !important;
+  color: var(--gray-color) !important;
+
+  border-radius: 0.5rem !important;
+
+  /* gradiant */
+  background: rgb(255, 255, 255) !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
+
+  transition: all .5s ;
+}
+.form__inputText-fail::placeholder {
+  color: var(--redLite-color) !important;
+}
+.form__inputText-fail:focus {
+  border-color: var(--redLite-color) !important;
+  box-shadow: none !important;
+}
+

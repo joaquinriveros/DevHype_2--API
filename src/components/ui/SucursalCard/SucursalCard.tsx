@@ -1,19 +1,26 @@
 import { useNavigate } from "react-router-dom";
-import styles from "./EmpresaCard.module.css";
+import styles from "./SucursalCard.module.css";
+import { ISucursal } from "../../../types/ISucursal";
+import { FC } from "react";
 
-export const EmpresaCard = () => {
+interface ISucursalCard{
+  sucursal: ISucursal;
+}
+export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
+
 
   const navigate = useNavigate();
   const handleCategoriesNavigate = () => {
-    navigate(`/productos/idEjemplo`)
+    navigate(`/productos/${sucursal.name}`)
   };
 
   return (
     <div className={styles.card} onClick={handleCategoriesNavigate}>
-      <h3 className={styles.card__tittle}>Empresa</h3>
+      <h3 className={styles.card__tittle}>{sucursal.name}</h3>
       <img
-        src="https://www.unicenter.com.ar/files/get/2850"
+        src={sucursal.url}
         className={styles.card__imagen}
+        alt="Sucursal img"
       />
       <div className={styles.card__buttonContainer}>
         <button className={styles.card__btOption}>

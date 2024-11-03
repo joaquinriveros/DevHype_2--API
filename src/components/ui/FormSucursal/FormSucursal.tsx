@@ -1,39 +1,50 @@
-import { useState } from "react";
-import { Form, Row } from "react-bootstrap";
-import { useForm } from "../../../hooks/useForm";
-import styles from "./FormEmprese.module.css";
-import { IEmpresa } from "../../../types/IEmpresa";
-import { empresas } from "../../../data/empresas";
+import { useState } from 'react';
+import styles from './FormSucursal.module.css'
+import { useForm } from '../../../hooks/useForm';
+import { Form, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 interface FormEmpresaProps {
   onClose: () => void; // Prop para cerrar el formulario
 }
 
-export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
+export const FormSucursal: React.FC<FormEmpresaProps> = ({ onClose }) => {
+
   const [validated, setValidated] = useState<boolean>(false);
   const [failTry, setFailTry] = useState<boolean>(false);
+  const [image, setImage] = useState<File | null>(null);
 
   const { values, handleChanges } = useForm({
     name: "",
     description: "",
     cuit: "",
+    urlImg: "",
   });
 
-  const { name, description, cuit } = values;
+  const { name, description, cuit, urlImg } = values;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !description || !cuit) {
+    if (!name || !description || !cuit || !urlImg) {
       setFailTry(true);
       return;
     }
 
-    const newEmpresa: IEmpresa = { name: name, description: description, cuit: cuit, sucursales: [] };
-    empresas.push(newEmpresa);
-
+    const newSucursal = { name, description, cuit };
     setValidated(true);
     onClose();
+    console.log(newSucursal)
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Obtiene el primer archivo
+    if (file) {
+      setImage(file); // Actualiza el estado con el archivo seleccionado
+      const url = URL.createObjectURL(file);
+      values.urlImg = url;
+    }
   };
 
   return (
@@ -50,11 +61,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
           <Form.Group className={styles.form__group} controlId="nameImput">
             <Form.Label>Nombre</Form.Label>
             <Form.Control
-              className={`${
-                failTry && name === ""
-                  ? "form__inputText-fail"
-                  : "form__inputText"
-              }`}
+              className={`${failTry && name==='' ? "form__inputText-fail":"form__inputText"}`}
               required
               type="text"
               placeholder="nombre"
@@ -72,11 +79,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
           >
             <Form.Label>Descripción</Form.Label>
             <Form.Control
-              className={`${
-                failTry && description === ""
-                  ? "form__inputText-fail"
-                  : "form__inputText"
-              }`}
+              className={`${failTry && description==='' ? "form__inputText-fail":"form__inputText"}`}
               required
               type="text"
               placeholder="Descripción"
@@ -91,11 +94,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
           <Form.Group className={styles.form__group} controlId="cuitImput">
             <Form.Label>CUIT</Form.Label>
             <Form.Control
-              className={`${
-                failTry && cuit === ""
-                  ? "form__inputText-fail"
-                  : "form__inputText"
-              }`}
+              className={`${failTry && cuit==='' ? "form__inputText-fail":"form__inputText"}`}
               required
               type="text"
               placeholder="CUIT"
@@ -104,6 +103,38 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               value={cuit}
             />
             <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
+          </Form.Group>
+        </Row>
+        <Row className={styles.form__input}>
+          <Form.Group className={styles.form__groupImg} controlId="imageImput">
+            <div className={styles.form__inputImgContainer}>
+              <Form.Label className={styles.form__selectImg}>
+                Seleccionar Imagen
+              </Form.Label>
+              <Form.Control
+                style={{ display: "none" }}
+                required
+                type="file"
+                accept="image/*" // Acepta solo imágenes
+                onChange={handleImageChange} // Maneja el cambio en el input
+              />
+            </div>
+            <div className={styles.form__imgView}>
+              {values.urlImg !== "" ? (
+                <img
+                  src={urlImg}
+                  alt="Miniatura"
+                  style={{
+                    width: "100%",
+                    height: "8rem",
+                    objectFit: "cover",
+                    borderRadius: "1rem",
+                  }}
+                />
+              ) : (
+                <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
+              )}
+            </div>
           </Form.Group>
         </Row>
 
@@ -115,18 +146,8 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
             Cerrar
           </button>
         </div>
-        <p
-          className={`${
-            failTry
-              ? styles.login__errorMesajeVisivility
-              : styles.login__errorMesaje
-          } `}
-        >
-          Invalid login
-        </p>
+        <p className={`${failTry?styles.login__errorMesajeVisivility:styles.login__errorMesaje} `}>Invalid login</p>
       </Form>
     </div>
   );
-};
-
-export default FormEmpresa;
+}
