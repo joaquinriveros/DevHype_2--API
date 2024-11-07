@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./SucursalCard.module.css";
 import { ISucursal } from "../../../types/ISucursal";
 import { FC } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBuilding, faPen, faEye } from "@fortawesome/free-solid-svg-icons";
 
 interface ISucursalCard{
   sucursal: ISucursal;
@@ -23,14 +25,14 @@ export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
         alt="Sucursal img"
       />
       <div className={styles.card__buttonContainer}>
-        <button className={styles.card__btOption}>
-          <span className="material-symbols-outlined">domain</span>
+        <button className='boxStyle__icon'>
+        <FontAwesomeIcon icon={faBuilding} size="lg" />
         </button>
-        <button className={styles.card__btOption}>
-          <span className="material-symbols-outlined">edit</span>
+        <button className='boxStyle__icon'>
+        <FontAwesomeIcon icon={faPen} size="lg" />
         </button>
-        <button className={styles.card__btOption}>
-          <span className="material-symbols-outlined">visibility</span>
+        <button className='boxStyle__icon'>
+        <FontAwesomeIcon icon={faEye} size="lg" />
         </button>
       </div>
     </div>

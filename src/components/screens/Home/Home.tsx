@@ -3,11 +3,30 @@ import { EmpresaListItem } from "../../ui/EmpresaListItems/EmpresaListItem";
 import { useState } from "react";
 import { FormEmpresa } from "../../ui/FormEmpresa/FormEmpresa";
 import { empresas } from "../../../data/empresas";
+import { IEmpresa } from "../../../types/IEmpresa";
+import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
+import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 
 export const Home = () => {
+  const [selectedViewEmpresa, setSelectedViewEmpresa] =
+    useState<IEmpresa | null>(null);
+  const [selectedEditEmpresa, setSelectedEditEmpresa] =
+    useState<IEmpresa | null>(null);
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
 
+  const handleEmpresClickView = (empresaClicked: IEmpresa) => {
+    setSelectedViewEmpresa(empresaClicked);
+  };
+  const closeViewEmpresa = () => {
+    setSelectedViewEmpresa(null);
+  };
+  const handleEmpresClickEdit = (empresaClicked: IEmpresa) => {
+    setSelectedEditEmpresa(empresaClicked);
+  };
+  const closeEditEmpresa = () => {
+    setSelectedEditEmpresa(null);
+  };
   const toggleFormEmpresa = () =>
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
 
@@ -15,8 +34,24 @@ export const Home = () => {
     <>
       <div className={"aside-main__container"}>
         {isFormEmpresaVisible && (
-          <div className={styles.overlay}>
+          <div className="overlay">
             <FormEmpresa onClose={toggleFormEmpresa} />
+          </div>
+        )}
+        {selectedViewEmpresa && (
+          <div className="overlay">
+            <EmpresaView
+              empresa={selectedViewEmpresa}
+              onClose={closeViewEmpresa}
+            />
+          </div>
+        )}
+        {selectedEditEmpresa && (
+          <div className="overlay">
+            <FormEditEmpresa
+              empresa={selectedEditEmpresa}
+              onClose={closeEditEmpresa}
+            />
           </div>
         )}
 
@@ -25,7 +60,11 @@ export const Home = () => {
           <button className="add__button" onClick={toggleFormEmpresa}>
             Agregar Empresa
           </button>
-          <EmpresaListItem empresas={empresas} />
+          <EmpresaListItem
+            empresas={empresas}
+            onViewEmpresClick={handleEmpresClickView}
+            onEditEmpresClick={handleEmpresClickEdit}
+          />
         </aside>
 
         <div className={styles.home__body}>

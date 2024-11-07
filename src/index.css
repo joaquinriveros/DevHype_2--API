@@ -122,6 +122,9 @@ button:hover {
   font-size: small;
   color: var(--gray-color);
 }
+.boxStyle__icon:hover{
+  transform: scale(1.15);
+}
 .boxStyle__iconRed {
   border: 2px solid var(--red-color);
   height: 2rem;
@@ -186,4 +189,19 @@ button:hover {
   border-color: var(--redLite-color) !important;
   box-shadow: none !important;
 }
+
+/* pupUp */
+.overlay {
+  position: fixed; /* Ocupa toda la pantalla */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que el overlay esté por encima de otros elementos */
+}
+
 

@@ -1,22 +1,25 @@
 import { useState } from "react";
 import { Form, Row } from "react-bootstrap";
 import { useForm } from "../../../hooks/useForm";
-import styles from "./FormEmprese.module.css";
+import styles from "./FormEditEmprese.module.css";
 import { IEmpresa } from "../../../types/IEmpresa";
-import { empresas } from "../../../data/empresas";
 
-interface FormEmpresaProps {
+interface FormEditEmpresaProps {
+  empresa: IEmpresa;
   onClose: () => void; // Prop para cerrar el formulario
 }
 
-export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
+export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
+  empresa,
+  onClose,
+}) => {
   const [validated, setValidated] = useState<boolean>(false);
   const [failTry, setFailTry] = useState<boolean>(false);
 
   const { values, handleChanges } = useForm({
-    name: "",
-    description: "",
-    cuit: "",
+    name: empresa.name,
+    description: empresa.description,
+    cuit: empresa.cuit,
   });
 
   const { name, description, cuit } = values;
@@ -29,8 +32,9 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
       return;
     }
 
-    const newEmpresa: IEmpresa = { name: name, description: description, cuit: cuit, sucursales: [] };
-    empresas.push(newEmpresa);
+    empresa.name = name;
+    empresa.description = description;
+    empresa.cuit = cuit;
 
     setValidated(true);
     onClose();
@@ -109,10 +113,10 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
 
         <div className={styles.form__buttonContainer}>
           <button className="add__button-green" type="submit">
-            Crear
+            Aplicar
           </button>
           <button className="add__button" onClick={onClose}>
-            Cerrar
+            Cancelar
           </button>
         </div>
         <p
@@ -129,4 +133,4 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
   );
 };
 
-export default FormEmpresa;
+export default FormEditEmpresa;
