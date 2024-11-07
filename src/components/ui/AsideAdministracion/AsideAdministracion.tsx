@@ -27,33 +27,35 @@ export const AsideAdministracion: FC<ITittleAside> = ({
           {empresaTittle}
         </h4>
       </NavLink>
-      <h2 style={{ textTransform: "capitalize" }}>Administracion</h2>
-      <nav className={styles.asideCategories__linkContainer}>
-        <NavLink
-          to="/alergenos/idEjemplo"
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
-          Alergenos
-        </NavLink>
-        <NavLink
-          to="/categorias/idEjemplo"
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
-          Categorias
-        </NavLink>
-        <NavLink
-          to="/productos/idEjemplo"
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
-          Productos
-        </NavLink>
-      </nav>
+      <div className={styles.asideCategories__Container}>
+        <h2 style={{ textTransform: "capitalize" }}>Administración</h2>
+        <nav className={styles.asideCategories__linkContainer}>
+          <NavLink
+            to="/alergenos/idEjemplo"
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+          >
+            Alergenos
+          </NavLink>
+          <NavLink
+            to="/categorias/idEjemplo"
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+          >
+            Categorias
+          </NavLink>
+          <NavLink
+            to="/productos/idEjemplo"
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+          >
+            Productos
+          </NavLink>
+        </nav>
+      </div>
     </aside>
   );
 };
