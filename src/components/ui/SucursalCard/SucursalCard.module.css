@@ -12,6 +12,12 @@
     border-radius: 1rem;
     color: white;
     padding: 1rem;
+
+    transition: all .5s;
+}
+.card:hover{
+    transform: scale(1.05);
+    cursor: pointer;
 }
 
 .card__tittle {
@@ -31,19 +37,3 @@
    gap: 2rem;
    margin: .5rem;
 }
-
-.card__btOption {
-    border: 2px solid var(--white-color);
-    height: 2rem;
-    width: 2rem;
-    border-radius: 5px;
-    cursor: pointer;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: none;
-    font-size: small;
-    color: var(--gray-color);
-  }
