@@ -21,7 +21,6 @@ export const Empresa = () => {
     result ? setEmpresa(result) : setEmpresa(null);
   });
   return (
-    //Si estás leyendo esto es por que no borré el repo - Enzo
     <>
       {empresa ? (
         <div className={"aside-main__container"}>
