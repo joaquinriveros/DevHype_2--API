@@ -32,7 +32,7 @@ export const Productos = () => {
 
   return (
     <div className={"aside-main__container"}>
-      <AsideAdministracion empresaTittle="Samsung Argentina" />
+      <AsideAdministracion empresaTittle="Empresa" />
 
       <div className={styles.producto__body}>
         <div className={styles.producto__header}>
@@ -45,10 +45,10 @@ export const Productos = () => {
                 value={selectedCategory}
                 onChange={handleSelectChange}
               >
-                <option value="All" selected>Todos</option>
-                <option value="Electrodomesticos">Electrodomesticos</option>
-                <option value="Smart Phones">Smart Phones</option>
-                <option value="Notebooks">Notebooks</option>
+                <option value="All" selected>Seleccionar una categoría</option>
+                <option value="Electrodomesticos">Categoria 1</option>
+                <option value="Smart Phones">Categoria 2</option>
+                <option value="Notebooks">Categoria 3</option>
               </select>
             </div>
           </div>

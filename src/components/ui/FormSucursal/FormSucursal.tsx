@@ -36,6 +36,7 @@ export const FormSucursal: React.FC<FormEmpresaProps> = ({ onClose }) => {
     setValidated(true);
     onClose();
     console.log(newSucursal)
+    console.log(image)
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {

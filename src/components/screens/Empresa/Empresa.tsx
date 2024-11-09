@@ -7,26 +7,65 @@ import { IEmpresa } from "../../../types/IEmpresa";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
 import { useParams } from "react-router-dom";
 import { SucursalCard } from "../../ui/SucursalCard/SucursalCard";
+import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
+import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 
 export const Empresa = () => {
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
-  const cuit = useParams().cuit;
+  const [selectedViewEmpresa, setSelectedViewEmpresa] =
+    useState<IEmpresa | null>(null);
+  const [selectedEditEmpresa, setSelectedEditEmpresa] =
+    useState<IEmpresa | null>(null);
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
 
-  const toggleFormEmpresa = () =>
+  const cuit = useParams().cuit;
+
+  const toggleFormEmpresa = () => {
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
+  };
+
+  const handleEmpresClickView = (empresaClicked: IEmpresa) => {
+    setSelectedViewEmpresa(empresaClicked);
+  };
+  const closeViewEmpresa = () => {
+    setSelectedViewEmpresa(null);
+  };
+  const handleEmpresClickEdit = (empresaClicked: IEmpresa) => {
+    setSelectedEditEmpresa(empresaClicked);
+  };
+  const closeEditEmpresa = () => {
+    setSelectedEditEmpresa(null);
+  };
+
   useEffect(() => {
     const result = empresas.find((e) => e.cuit === cuit);
     result ? setEmpresa(result) : setEmpresa(null);
   });
+
   return (
     <>
       {empresa ? (
         <div className={"aside-main__container"}>
           {isFormEmpresaVisible && (
-            <div className={styles.overlay}>
+            <div className="overlay">
               <FormEmpresa onClose={toggleFormEmpresa} />
+            </div>
+          )}
+          {selectedViewEmpresa && (
+            <div className="overlay">
+              <EmpresaView
+                empresa={selectedViewEmpresa}
+                onClose={closeViewEmpresa}
+              />
+            </div>
+          )}
+          {selectedEditEmpresa && (
+            <div className="overlay">
+              <FormEditEmpresa
+                empresa={selectedEditEmpresa}
+                onClose={closeEditEmpresa}
+              />
             </div>
           )}
 
@@ -35,7 +74,11 @@ export const Empresa = () => {
             <button className="add__button" onClick={toggleFormEmpresa}>
               Agregar Empresa
             </button>
-            <EmpresaListItem empresas={empresas} />
+            <EmpresaListItem
+              empresas={empresas}
+              onViewEmpresClick={handleEmpresClickView}
+              onEditEmpresClick={handleEmpresClickEdit}
+            />
           </aside>
 
           <div className={styles.empresa__body}>
