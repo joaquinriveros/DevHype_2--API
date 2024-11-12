@@ -2,12 +2,14 @@ import styles from "./Home.module.css";
 import { EmpresaListItem } from "../../ui/EmpresaListItems/EmpresaListItem";
 import { useState } from "react";
 import { FormEmpresa } from "../../ui/FormEmpresa/FormEmpresa";
-import { empresas } from "../../../data/empresas";
-import { IEmpresa } from "../../../types/IEmpresa";
 import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 export const Home = () => {
+  // Aca seria un listado de las empresas, pero todavia no esta asignado
+  const [empresas, setEmpresas] =
+    useState<IEmpresa[]>([]);
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
   const [selectedEditEmpresa, setSelectedEditEmpresa] =

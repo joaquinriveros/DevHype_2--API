@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Form, Row } from "react-bootstrap";
 import { useForm } from "../../../hooks/useForm";
 import styles from "./FormEmprese.module.css";
-import { IEmpresa } from "../../../types/IEmpresa";
-import { empresas } from "../../../data/empresas";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,26 +14,31 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
   const [failTry, setFailTry] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null);
 
-
   const { values, handleChanges } = useForm({
     name: "",
-    description: "",
-    cuit: "",
-    urlImg: "",
+    razonSocial: "",
+    cuit: 0,
+    logo: "",
   });
 
-  const { name, description, cuit, urlImg } = values;
+  const { name, razonSocial, cuit, logo } = values;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !description || !cuit || !urlImg) {
+    if (!name || !razonSocial || !cuit || !logo) {
       setFailTry(true);
       return;
     }
 
-    const newEmpresa: IEmpresa = { name: name, description: description, cuit: cuit, urlImg: urlImg, sucursales: [] };
-    empresas.push(newEmpresa);
+    // const newEmpresa: IEmpresa = {
+    //   nombre: name,
+    //   razonSocial: razonSocial,
+    //   cuit: cuit,
+    //   logo: logo,
+    //   sucursales: [],
+    // };
+    // empresas.push(newEmpresa);
 
     setValidated(true);
     onClose();
@@ -45,9 +48,9 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
     if (file) {
       setImage(file); // Actualiza el estado con el archivo seleccionado
       const url = URL.createObjectURL(file);
-      values.urlImg = url;
+      values.logo = url;
     }
-    console.log(image)
+    console.log(image);
   };
 
   return (
@@ -82,21 +85,21 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
         <Row className={styles.form__input}>
           <Form.Group
             className={styles.form__group}
-            controlId="descriptionImput"
+            controlId="razonSocialImput"
           >
             <Form.Label>Descripción</Form.Label>
             <Form.Control
               className={`${
-                failTry && description === ""
+                failTry && razonSocial === ""
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}
               required
               type="text"
-              placeholder="Descripción"
+              placeholder="Razon Social"
               onChange={handleChanges}
-              name="description"
-              value={description}
+              name="razonSocial"
+              value={razonSocial}
             />
             <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
@@ -106,7 +109,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
             <Form.Label>CUIT</Form.Label>
             <Form.Control
               className={`${
-                failTry && cuit === ""
+                failTry && cuit === 0
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}
@@ -135,9 +138,9 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               />
             </div>
             <div className={styles.form__imgView}>
-              {values.urlImg !== "" ? (
+              {values.logo !== "" ? (
                 <img
-                  src={urlImg}
+                  src={logo}
                   alt="Miniatura"
                   style={{
                     width: "100%",
