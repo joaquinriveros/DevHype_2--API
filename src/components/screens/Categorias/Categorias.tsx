@@ -4,7 +4,6 @@ import { IEmpresa } from "../../../types/IEmpresa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ISucursal } from "../../../types/ISucursal";
-import { empresas } from "../../../data/empresas";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
 
 export const Categorias = () => {
