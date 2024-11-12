@@ -102,7 +102,7 @@ export const Empresa = () => {
           </div>
         </div>
       ) : (
-        <ErrorPage mesaje="Empresa no encontrasa!" />
+        <ErrorPage mesaje="Empresa no encontrada!" />
       )}
     </>
   );
