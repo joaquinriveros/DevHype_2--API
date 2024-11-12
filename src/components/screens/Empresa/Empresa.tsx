@@ -2,15 +2,17 @@ import styles from "./Empresa.module.css";
 import { EmpresaListItem } from "../../ui/EmpresaListItems/EmpresaListItem";
 import { useEffect, useState } from "react";
 import { FormEmpresa } from "../../ui/FormEmpresa/FormEmpresa";
-import { empresas } from "../../../data/empresas";
-import { IEmpresa } from "../../../types/IEmpresa";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
 import { useParams } from "react-router-dom";
 import { SucursalCard } from "../../ui/SucursalCard/SucursalCard";
 import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 export const Empresa = () => {
+  // Aca seria un listado de las empresas, pero todavia no esta asignado
+  const [empresas, setEmpresas] =
+    useState<IEmpresa[]>([]);
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
@@ -39,7 +41,7 @@ export const Empresa = () => {
   };
 
   useEffect(() => {
-    const result = empresas.find((e) => e.cuit === cuit);
+    const result = empresas.find((em) => em.cuit.toString() === cuit);
     result ? setEmpresa(result) : setEmpresa(null);
   });
 
@@ -85,7 +87,7 @@ export const Empresa = () => {
             <div className={styles.empresa__header}>
               <div className={styles.empresa__tittleContainer}>
                 <h2 className={styles.empresa__tittle}>
-                  Sucursales de {empresa.name}
+                  Sucursales de {empresa.nombre}
                 </h2>
               </div>
               <div className={styles.empresa__bottonContainer}>

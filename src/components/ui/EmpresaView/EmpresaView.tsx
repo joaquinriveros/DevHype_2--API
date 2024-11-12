@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IEmpresa } from "../../../types/IEmpresa";
 import styles from "./EmpresaView.module.css";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 interface EmpresaViewProps {
   empresa: IEmpresa;
@@ -13,12 +13,12 @@ export const EmpresaView: React.FC<EmpresaViewProps> = ({
 }) => {
   return (
     <div className={styles.Empresaview__container}>
-      <h3> {empresa.name}</h3>
+      <h3> {empresa.nombre}</h3>
       <div className={styles.Empresaview__infoContainer}>
         <p className={styles.Empresaview__txtCategory}>
-          <b>Descripcion:</b>
+          <b>Razon Social:</b>
         </p>
-        <p className={styles.Empresaview__txtInfo}>{empresa.description}</p>
+        <p className={styles.Empresaview__txtInfo}>{empresa.razonSocial}</p>
         <p className={styles.Empresaview__txtCategory}>
           <b>CUIT:</b>
         </p>
@@ -30,20 +30,20 @@ export const EmpresaView: React.FC<EmpresaViewProps> = ({
           {empresa.sucursales.length}
         </p>
         <div className={styles.Empresaview__img}>
-        {empresa.urlImg !== "" ? (
-                <img
-                  src={empresa.urlImg}
-                  alt="Miniatura"
-                  style={{
-                    width: "100%",
-                    height: "8rem",
-                    objectFit: "cover",
-                    borderRadius: "1rem",
-                  }}
-                />
-              ) : (
-                <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
-              )}
+          {empresa.logo? (
+            <img
+              src={empresa.logo}
+              alt="Miniatura"
+              style={{
+                width: "100%",
+                height: "8rem",
+                objectFit: "cover",
+                borderRadius: "1rem",
+              }}
+            />
+          ) : (
+            <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
+          )}
         </div>
       </div>
       <button className="add__button" onClick={onClose}>
