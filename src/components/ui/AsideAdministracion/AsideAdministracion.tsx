@@ -3,17 +3,19 @@ import styles from "./AsideAdministracion.module.css";
 import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ISucursal } from "../../../types/ISucursal";
+import { IEmpresa } from "../../../types/IEmpresa";
 
-interface ITittleAside {
-  empresaTittle: string;
+interface IAside {
+  empresa: IEmpresa,
+  sucursal: ISucursal
 }
 
-export const AsideAdministracion: FC<ITittleAside> = ({
-  empresaTittle,
-}) => {
+export const AsideAdministracion: FC<IAside> = ({empresa, sucursal}) => {
+  
   return (
     <aside className={styles.asideCategories}>
-      <NavLink to="/" className={styles.asideCategories__backContainer}>
+      <NavLink to={`/empresa/${empresa.cuit}`} className={styles.asideCategories__backContainer}>
         <div className={styles.asideCategories__backIcon}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </div>
@@ -24,14 +26,14 @@ export const AsideAdministracion: FC<ITittleAside> = ({
             margin: "0px",
           }}
         >
-          {empresaTittle}
+          {empresa.name}
         </h4>
       </NavLink>
       <div className={styles.asideCategories__Container}>
-        <h2 style={{ textTransform: "capitalize" }}>Administración</h2>
+        <h2 style={{ textTransform: "capitalize", textAlign: "center"}}>Administración</h2>
         <nav className={styles.asideCategories__linkContainer}>
           <NavLink
-            to="/alergenos/idEjemplo"
+            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.idSucursal}/alergenos`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }
@@ -39,7 +41,7 @@ export const AsideAdministracion: FC<ITittleAside> = ({
             Alergenos
           </NavLink>
           <NavLink
-            to="/categorias/idEjemplo"
+            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.idSucursal}/categorias`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }
@@ -47,7 +49,7 @@ export const AsideAdministracion: FC<ITittleAside> = ({
             Categorias
           </NavLink>
           <NavLink
-            to="/productos/idEjemplo"
+            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.idSucursal}/productos`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }

@@ -1,5 +1,7 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IEmpresa } from "../../../types/IEmpresa";
 import styles from "./EmpresaView.module.css";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 
 interface EmpresaViewProps {
   empresa: IEmpresa;
@@ -24,7 +26,25 @@ export const EmpresaView: React.FC<EmpresaViewProps> = ({
         <p className={styles.Empresaview__txtCategory}>
           <b>Sucursales:</b>
         </p>
-        <p className={styles.Empresaview__txtInfo}>{empresa.sucursales.length}</p>
+        <p className={styles.Empresaview__txtInfo}>
+          {empresa.sucursales.length}
+        </p>
+        <div className={styles.Empresaview__img}>
+        {empresa.urlImg !== "" ? (
+                <img
+                  src={empresa.urlImg}
+                  alt="Miniatura"
+                  style={{
+                    width: "100%",
+                    height: "8rem",
+                    objectFit: "cover",
+                    borderRadius: "1rem",
+                  }}
+                />
+              ) : (
+                <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
+              )}
+        </div>
       </div>
       <button className="add__button" onClick={onClose}>
         Cerrar

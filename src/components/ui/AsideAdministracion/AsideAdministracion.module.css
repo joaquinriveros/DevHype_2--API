@@ -54,6 +54,7 @@
 }
 /* Administracion */
 .asideCategories__Container{
+  width: 100%;
   border: 2px solid var(--borderGray-color);
   border-radius: 15px;     
   padding: 25px;

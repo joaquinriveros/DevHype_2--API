@@ -5,8 +5,10 @@ export const empresas: IEmpresa[] = [
     name: "Empresa Ejemplo 1",
     description: "Calle Falsa 123",
     cuit: "363636",
+    urlImg: "",
     sucursales: [
       {
+        idSucursal: "1100",
         name: "Sucursal 1",
         description: "Av. Siempreviva 742",
         url: 'https://www.unicenter.com.ar/files/get/2850',
@@ -94,6 +96,7 @@ export const empresas: IEmpresa[] = [
         ],
       },
       {
+        idSucursal: "1200",
         name: "Sucursal 2",
         description: "Calle Real 456",
         url: 'https://www.unicenter.com.ar/files/get/2850',
@@ -186,8 +189,10 @@ export const empresas: IEmpresa[] = [
     name: "Maxon corp",
     description: "Calle Verdad 789",
     cuit: "303030",
+    urlImg: "",
     sucursales: [
       {
+        idSucursal: "1300",
         name: "Sucursal 3",
         description: "Av. Principal 987",
         url: 'https://www.unicenter.com.ar/files/get/2850',
