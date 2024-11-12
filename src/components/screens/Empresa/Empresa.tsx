@@ -8,14 +8,16 @@ import { SucursalCard } from "../../ui/SucursalCard/SucursalCard";
 import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
+import { ClienteService } from "../../../services/EmrpesaService";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
-  const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
+  const [empresa, setEmpresa] = useState<IEmpresa[] | null>(null);
   const [selectedViewEmpresa, setSelectedViewEmpresa] = useState<IEmpresa | null>(null);
   const [selectedEditEmpresa, setSelectedEditEmpresa] = useState<IEmpresa | null>(null);
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] = useState<boolean>(false);
+  const clienteService = new ClienteService();
 
   const cuit = useParams().empresaCuit;
 
@@ -37,8 +39,11 @@ export const Empresa = () => {
   };
 
   useEffect(() => {
-    const result = empresas.find((em) => em.cuit.toString() === cuit);
-    result ? setEmpresa(result) : setEmpresa(null);
+    async function cargarEmpresas() {
+      const result = await clienteService.getAll();
+      result ? setEmpresa(result) : setEmpresa(null);
+    };
+    cargarEmpresas()
   });
 
   return (
@@ -83,7 +88,7 @@ export const Empresa = () => {
             <div className={styles.empresa__header}>
               <div className={styles.empresa__tittleContainer}>
                 <h2 className={styles.empresa__tittle}>
-                  Sucursales de {empresa.nombre}
+                  Sucursales de {"Empresa"}
                 </h2>
               </div>
               <div className={styles.empresa__bottonContainer}>
