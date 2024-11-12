@@ -7,7 +7,7 @@ import { IProduct } from "../../../types/IProduct";
 export const Productos = () => {
 
   const [selectedCategory, setSelectedCategory] = useState("All"); 
-  const [productsFiltered, setProductsFiltered] = useState<IProduct[]>([])
+  const [productsFiltered, setProductsFiltered] = useState<IProduct[]>([]);
   
   /* Productos ejemplo */
   const productsEj: IProduct[] = [
