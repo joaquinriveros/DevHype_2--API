@@ -19,7 +19,7 @@ export const Empresa = () => {
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
 
-  const cuit = useParams().cuit;
+  const cuit = useParams().empresaCuit;
 
   const toggleFormEmpresa = () => {
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario

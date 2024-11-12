@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./SucursalCard.module.css";
 import { ISucursal } from "../../../types/ISucursal";
 import { FC } from "react";
@@ -9,11 +9,11 @@ interface ISucursalCard{
   sucursal: ISucursal;
 }
 export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
-
+  const { empresaCuit } = useParams();
 
   const navigate = useNavigate();
   const handleCategoriesNavigate = () => {
-    navigate(`/productos/${sucursal.name}`)
+    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.idSucursal}/productos`)
   };
 
   return (

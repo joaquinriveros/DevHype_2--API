@@ -24,3 +24,23 @@
 .Empresaview__txtCategory{
   margin: 0;
 }
+.Empresaview__img {
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border: 2px solid var(--borderGray-color);
+  border-radius: 0.5rem;
+  width: 10rem;
+  height: 8rem;
+  border-radius: 1rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0px auto;
+}
