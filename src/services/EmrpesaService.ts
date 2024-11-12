@@ -1,13 +1,8 @@
-// Importamos SweetAlert2 para mostrar alertas de carga y errores
 import Swal from "sweetalert2";
-// Importamos la clase BackendClient que extiende las funcionalidades de llamadas a API
 import { BackendClient } from "./BackendClient";
-// Importamos el tipo de datos IImagen para manejar imágenes en nuestra aplicación
 import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
-// Obtenemos la URL base de la API desde las variables de entorno
 const API_URL = "http://localhost:8090/empresas";
 
-// Clase ImageService que extiende BackendClient para manejar imágenes con la API
 export class ClienteService extends BackendClient<IEmpresa> {
     constructor() {
         super(`${API_URL}`);
@@ -64,5 +59,4 @@ export class ClienteService extends BackendClient<IEmpresa> {
         }
     }
 
-    
 }
