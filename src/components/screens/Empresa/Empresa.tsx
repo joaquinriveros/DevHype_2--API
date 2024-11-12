@@ -11,15 +11,11 @@ import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
-  const [empresas, setEmpresas] =
-    useState<IEmpresa[]>([]);
+  const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
-  const [selectedViewEmpresa, setSelectedViewEmpresa] =
-    useState<IEmpresa | null>(null);
-  const [selectedEditEmpresa, setSelectedEditEmpresa] =
-    useState<IEmpresa | null>(null);
-  const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
-    useState<boolean>(false);
+  const [selectedViewEmpresa, setSelectedViewEmpresa] = useState<IEmpresa | null>(null);
+  const [selectedEditEmpresa, setSelectedEditEmpresa] = useState<IEmpresa | null>(null);
+  const [isFormEmpresaVisible, setIsFormEmpresaVisible] = useState<boolean>(false);
 
   const cuit = useParams().empresaCuit;
 

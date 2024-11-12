@@ -6,7 +6,6 @@
   width: 100%;
   background: var(--secondaryBlue-color);
   color: var(--white-color);
-
   max-height: 100vh;
   overflow-y: auto; /* Scroll vertical en el main */
 }
@@ -33,7 +32,6 @@
   height: 100%;
   background-color: var(--bgBlue-color);
   padding: 1.5rem;
-  
   overflow-y: auto; /* Scroll vertical en el main */
 }
 
