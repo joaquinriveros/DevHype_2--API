@@ -60,6 +60,34 @@ export class SucursalService extends BackendClient<ISucursal> {
         }
     }
 
+    async getIsCasaMatriz(): Promise<ISucursal>{
+        Swal.fire({
+            title: "Cargando casa matriz...",
+            allowOutsideClick: false, 
+            didOpen: () => {
+                Swal.showLoading(); 
+            },
+        });
 
+        try{
+            const response = await fetch(`${API_URL}/existCasaMatriz/1`, {
+                method: "GET",
+            });
 
+            if (!response.ok) {
+                throw new Error("Error al cargar la casa matriz");
+            }
+
+            const newData : ISucursal = await response.json();
+            return newData;
+        } finally {
+            Swal.close(); 
+        }
+    }
+
+    //Create: http://190.221.207.224:8090/sucursales/create
+
+    //EditOneSucursal: http://190.221.207.224:8090/sucursales/update/1
+
+    //
 }

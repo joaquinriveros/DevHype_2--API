@@ -34,31 +34,6 @@ export class AlegenoService extends BackendClient<IAlergenos> {
         }
     }
 
-    async getAllCategoriaPorSucursal(idSucursal : number): Promise<IAlergenos[]> {
-        Swal.fire({
-            title: "Cargando categorías de la sucursal...",
-            allowOutsideClick: false, 
-            didOpen: () => {
-                Swal.showLoading(); 
-            },
-        });
-
-        try{
-            const response = await fetch(`${API_URL}/allCategoriasPorSucursal/${idSucursal}`, {
-                method: "GET",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al cargar los alergenos id: " + idSucursal);
-            }
-
-            const newData : IAlergenos[] = await response.json();
-            return newData;
-        } finally {
-            Swal.close(); 
-        }
-    }
-
     async getAlergenoById(idAlergeno : number): Promise<IAlergenos> {
         Swal.fire({
             title: "Buscando alergeno...",
@@ -74,7 +49,7 @@ export class AlegenoService extends BackendClient<IAlergenos> {
             });
 
             if (!response.ok) {
-                throw new Error("Error al cargar el alergeno id:" + idAlergeno);
+                throw new Error("Error al cargar el alergeno");
             }
 
             const newData : IAlergenos = await response.json();
