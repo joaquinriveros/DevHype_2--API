@@ -12,13 +12,13 @@ export class ClienteService extends BackendClient<IEmpresa> {
     async getAllEmpresas(): Promise<IEmpresa[]> {
         Swal.fire({
             title: "Cargando empresas...",
-            allowOutsideClick: false, 
+            allowOutsideClick: false,
             didOpen: () => {
-                Swal.showLoading(); 
+                Swal.showLoading();
             },
         });
 
-        try{
+        try {
             const response = await fetch(`${API_URL}`, {
                 method: "GET",
             });
@@ -27,23 +27,23 @@ export class ClienteService extends BackendClient<IEmpresa> {
                 throw new Error("Error al cargar las empresas");
             }
 
-            const newData : IEmpresa[] = await response.json();
+            const newData: IEmpresa[] = await response.json();
             return newData;
         } finally {
-            Swal.close(); 
+            Swal.close();
         }
     }
 
-    async getEmpresaById(idEmpresa : number): Promise<IEmpresa> {
+    async getEmpresaById(idEmpresa: number): Promise<IEmpresa> {
         Swal.fire({
             title: "Buscando empresa...",
-            allowOutsideClick: false, 
+            allowOutsideClick: false,
             didOpen: () => {
-                Swal.showLoading(); 
+                Swal.showLoading();
             },
         });
 
-        try{
+        try {
             const response = await fetch(`${API_URL}/${idEmpresa}`, {
                 method: "GET",
             });
@@ -52,11 +52,70 @@ export class ClienteService extends BackendClient<IEmpresa> {
                 throw new Error("Error al cargar la empresa id:" + idEmpresa);
             }
 
-            const newData : IEmpresa = await response.json();
+            const newData: IEmpresa = await response.json();
             return newData;
         } finally {
-            Swal.close(); 
+            Swal.close();
         }
     }
 
+    //CREATE
+    async createEmpresa(empresa: IEmpresa) {
+        Swal.fire({
+            title: "Creando empresa...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const create = await fetch(`${API_URL}`, { //PREGUNTAR
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(empresa), //PREGUNTAR
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al crear la empresa");
+            } else {
+                console.log("Empresa creada exitosamente");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
+
+    //UPDATE
+    async updateEmpresa( idEmpresa: number, empresa : IEmpresa){
+        Swal.fire({
+            title: "Acualizando empresa...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const create = await fetch(`${API_URL}/${idEmpresa}`, { //PREGUNTAR
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(empresa), //PREGUNTAR
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al modificar la empresa");
+            } else {
+                console.log("Empresa modificada exitosamente");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
 }
