@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { ILocalidad } from "../types/ILocalidad";
-const API_URL = "http://localhost:8090/localidades";
+const API_URL = "http://190.221.207.224:8090/localidades";
 
 export class ClienteService extends BackendClient<ILocalidad> {
     constructor() {

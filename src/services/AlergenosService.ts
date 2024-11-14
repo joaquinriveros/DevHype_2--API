@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IAlergenos } from "../types/dtos/alergenos/IAlergenos";
 // Obtenemos la URL base de la API desde las variables de entorno
-const API_URL = "http://localhost:8090/alergenos";
+const API_URL = "http://190.221.207.224:8090/alergenos";
 
 export class AlegenoService extends BackendClient<IAlergenos> {
     constructor() {

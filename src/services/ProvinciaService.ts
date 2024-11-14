@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IProvincia } from "../types/IProvincia";
-const API_URL = "http://localhost:8090/provincias";
+const API_URL = "http://190.221.207.224:8090/provincias";
 
 
 
