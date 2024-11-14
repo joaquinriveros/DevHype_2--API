@@ -59,4 +59,61 @@ export class AlegenoService extends BackendClient<IAlergenos> {
         }
     }
 
+    async createAlergeneo(alergeno : IAlergenos){
+        Swal.fire({
+            title: "Creando alergeno...",
+            allowOutsideClick: false, 
+            didOpen: () => {
+                Swal.showLoading(); 
+            },
+        });
+
+        try{
+            const create = await fetch(`${API_URL}`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(alergeno),
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al crear el alergeno");
+            }else{
+                console.log("Alergeno creado exitosamente");
+            }
+
+        } finally {
+            Swal.close(); 
+        }
+    }
+
+    async updateAlergeno(idAlergeno : number, alergeno : IAlergenos){
+        Swal.fire({
+            title: "Acualizando alergeno...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const create = await fetch(`${API_URL}/${idAlergeno}`, { //PREGUNTAR
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(alergeno), //PREGUNTAR
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al modificar el alergeno");
+            } else {
+                console.log("Alergeno modificado exitosamente");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
 }

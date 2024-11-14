@@ -86,8 +86,62 @@ export class SucursalService extends BackendClient<ISucursal> {
     }
 
     //Create: http://190.221.207.224:8090/sucursales/create
+    async createSucursal(sucursal : ISucursal){
+        Swal.fire({
+            title: "Creando sucursal...",
+            allowOutsideClick: false, 
+            didOpen: () => {
+                Swal.showLoading(); 
+            },
+        });
+
+        try{
+            const create = await fetch(`${API_URL}/create`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(sucursal),
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al crear la sucursal");
+            }else{
+                console.log("Sucursal creada exitosamente");
+            }
+
+        } finally {
+            Swal.close(); 
+        }
+    }
 
     //EditOneSucursal: http://190.221.207.224:8090/sucursales/update/1
+    async updateSucursal(idSucursal : number, sucursal : ISucursal){
+        Swal.fire({
+            title: "Acualizando sucursal...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
 
-    //
+        try {
+            const create = await fetch(`${API_URL}/${idSucursal}`, { //PREGUNTAR
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(sucursal), //PREGUNTAR
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al modificar la sucursal");
+            } else {
+                console.log("Sucursal modificada exitosamente");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
 }

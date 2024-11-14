@@ -108,8 +108,63 @@ export class ClienteService extends BackendClient<IProductos> {
         }
     }
 
-    //UPDATE: "/articulos/update/4"
-
     //"CREATE "/articulos/create"
+    async createProducto(producto : IProductos){
+        Swal.fire({
+            title: "Creando producto...",
+            allowOutsideClick: false, 
+            didOpen: () => {
+                Swal.showLoading(); 
+            },
+        });
 
+        try{
+            const create = await fetch(`${API_URL}/create`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(producto),
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al crear el producto");
+            }else{
+                console.log("Producto creado exitosamente");
+            }
+
+        } finally {
+            Swal.close(); 
+        }
+    }
+
+    //UPDATE
+    async updateProducto(idProducto : number , producto : IProductos){
+        Swal.fire({
+            title: "Acualizando producto...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const create = await fetch(`${API_URL}/update/${idProducto}`, { //PREGUNTAR
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json" //PREGUNTAR
+                },
+                body: JSON.stringify(producto), //PREGUNTAR
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al modificar el producto");
+            } else {
+                console.log("Producto modificado exitosamente");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
 }
