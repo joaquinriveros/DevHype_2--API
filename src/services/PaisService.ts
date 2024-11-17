@@ -1,11 +1,11 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IPais } from "../types/IPais";
-const API_URL = "http://190.221.207.224:8090/paises";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class ClienteService extends BackendClient<IPais> {
-    constructor() {
-        super(`${API_URL}`);
+export class PaisService extends BackendClient<IPais> {
+    constructor(baseUrl : string = "paises") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
 
@@ -19,7 +19,7 @@ export class ClienteService extends BackendClient<IPais> {
         });
 
         try{
-            const response = await fetch(`${API_URL}`, {
+            const response = await fetch(`${this.baseUrl}`, {
                 method: "GET",
             });
 
@@ -27,8 +27,8 @@ export class ClienteService extends BackendClient<IPais> {
                 throw new Error("Error al cargar los paises");
             }
 
-            const newData : IPais[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as IPais[];
         } finally {
             Swal.close(); 
         }

@@ -1,15 +1,15 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { ILocalidad } from "../types/ILocalidad";
-const API_URL = "http://190.221.207.224:8090/localidades";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class ClienteService extends BackendClient<ILocalidad> {
-    constructor() {
-        super(`${API_URL}`);
+export class LocalidadService extends BackendClient<ILocalidad> {
+    constructor(baseUrl : string = "localidades") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
 
-    async getLocalidadesByProvincia(idProvincia : number): Promise<ILocalidad[]> {
+    async getLocalidadesByProvincia(idProvincia : number): Promise<ILocalidad[] | null> {
         Swal.fire({
             title: "Cargando localidades...",
             allowOutsideClick: false, 
@@ -19,7 +19,7 @@ export class ClienteService extends BackendClient<ILocalidad> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/findByProvincia/${idProvincia}`, {
+            const response = await fetch(`${this.baseUrl}/findByProvincia/${idProvincia}`, {
                 method: "GET",
             });
 
@@ -27,8 +27,8 @@ export class ClienteService extends BackendClient<ILocalidad> {
                 throw new Error("Error al cargar las localidades");
             }
 
-            const newData : ILocalidad[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ILocalidad[];
         } finally {
             Swal.close(); 
         }

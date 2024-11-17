@@ -1,17 +1,15 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IProvincia } from "../types/IProvincia";
-const API_URL = "http://190.221.207.224:8090/provincias";
+const API_URL = import.meta.env.VITE_URL_API;
 
-
-
-export class ClienteService extends BackendClient<IProvincia> {
-    constructor() {
-        super(`${API_URL}`);
+export class ProvinciaService extends BackendClient<IProvincia> {
+    constructor(baseUrl : string = "provincias") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
 
-    async getAllProvinciaByPais(idPais : number): Promise<IProvincia[]> {
+    async getAllProvinciaByPais(idPais : number): Promise<IProvincia[] | null> {
         Swal.fire({
             title: "Cargando provincias...",
             allowOutsideClick: false, 
@@ -21,7 +19,7 @@ export class ClienteService extends BackendClient<IProvincia> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/findByPais/${idPais}`, {
+            const response = await fetch(`${this.baseUrl}/findByPais/${idPais}`, {
                 method: "GET",
             });
 
@@ -29,8 +27,8 @@ export class ClienteService extends BackendClient<IProvincia> {
                 throw new Error("Error al cargar las provincias");
             }
 
-            const newData : IProvincia[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as IProvincia[];
         } finally {
             Swal.close(); 
         }

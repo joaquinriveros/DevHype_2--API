@@ -1,15 +1,16 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { ICategorias } from "../types/dtos/categorias/ICategorias";
-// Obtenemos la URL base de la API desde las variables de entorno
-const API_URL = "http://190.221.207.224:8090/categorias";
+import { ICreateCategoria } from "../types/dtos/categorias/ICreateCategoria";
+import { IUpdateCategoria } from "../types/dtos/categorias/IUpdateCategoria";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class CategoriaService extends BackendClient<ICategorias> {
-    constructor() {
-        super(`${API_URL}`);
+export class CategoriaService extends BackendClient<ICategorias | ICreateCategoria | IUpdateCategoria> {
+    constructor(baseUrl : string = "categorias") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
-    async getAllCategoriaPorSucursal(idSucursal : number): Promise<ICategorias[]> {
+    async getAllCategoriaPorSucursal(idSucursal : number): Promise<ICategorias[] | null> {
         Swal.fire({
             title: "Cargando categorías de la sucursal...",
             allowOutsideClick: false, 
@@ -19,7 +20,7 @@ export class CategoriaService extends BackendClient<ICategorias> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/allCategoriasPorSucursal/${idSucursal}`, {
+            const response = await fetch(`${this.baseUrl}/allCategoriasPorSucursal/${idSucursal}`, {
                 method: "GET",
             });
 
@@ -27,14 +28,14 @@ export class CategoriaService extends BackendClient<ICategorias> {
                 throw new Error("Error al cargar las categorias de sucursal id: " + idSucursal);
             }
 
-            const newData : ICategorias[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ICategorias[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getAllCategoriaPorEmpresa(idEmpresa : number): Promise<ICategorias[]> {
+    async getAllCategoriaPorEmpresa(idEmpresa : number): Promise<ICategorias[] | null> {
         Swal.fire({
             title: "Cargando categorias de la empresa...",
             allowOutsideClick: false, 
@@ -52,14 +53,14 @@ export class CategoriaService extends BackendClient<ICategorias> {
                 throw new Error("Error al cargar las categorias de epresa id: " + idEmpresa);
             }
 
-            const newData : ICategorias[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ICategorias[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getOneCategoria(idCategoria : number): Promise<ICategorias> {
+    async getOneCategoria(idCategoria : number): Promise<ICategorias | null> {
         Swal.fire({
             title: "Cargando categoría...",
             allowOutsideClick: false, 
@@ -69,7 +70,7 @@ export class CategoriaService extends BackendClient<ICategorias> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/categorias/${idCategoria}`, {
+            const response = await fetch(`${this.baseUrl}/${idCategoria}`, {
                 method: "GET",
             });
 
@@ -77,16 +78,14 @@ export class CategoriaService extends BackendClient<ICategorias> {
                 throw new Error("Error al cargar la categoria");
             }
 
-            const newData : ICategorias = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ICategorias;
         } finally {
             Swal.close(); 
         }
     }
 
-    //PREGUNTAR: http://190.221.207.224:8090/categorias/allSubCategoriasPorCategoriaPadre/1/1
-
-    async getAllSubCategoriasPorCategoriaPadre(idPadre : number): Promise<ICategorias[]>{
+    async getAllSubCategoriasPorCategoriaPadre(idPadre : number, idSucursal : number): Promise<ICategorias[]>{
         Swal.fire({
             title: "Cargando categoría...",
             allowOutsideClick: false, 
@@ -96,7 +95,8 @@ export class CategoriaService extends BackendClient<ICategorias> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/categorias/allSubCategoriasPorCategoriaPadre/${idPadre}/`, {
+            const response = await fetch(
+                `${this.baseUrl}/allSubCategoriasPorCategoriaPadre/${idPadre}/${idSucursal}`, {
                 method: "GET",
             });
 
@@ -104,14 +104,14 @@ export class CategoriaService extends BackendClient<ICategorias> {
                 throw new Error("Error al cargar la categoria");
             }
 
-            const newData : ICategorias[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ICategorias[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async createCategoria(categoria : ICategorias){
+    async createCategoria(categoria : ICreateCategoria): Promise<ICategorias | null>{
         Swal.fire({
             title: "Creando categoria...",
             allowOutsideClick: false, 
@@ -121,26 +121,26 @@ export class CategoriaService extends BackendClient<ICategorias> {
         });
 
         try{
-            const create = await fetch(`${API_URL}/create`, {
+            const response = await fetch(`${this.baseUrl}/create`, {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(categoria),
             });
 
-            if (!create.ok) {
+            if (!response.ok) {
                 throw new Error("Error al crear la categoria");
-            }else{
-                console.log("Categoria creada exitosamente");
             }
-
+            
+            const data = await response.json();
+            return data as ICategorias;
         } finally {
             Swal.close(); 
         }
     }
 
-    async updateCategoria(idCategoria : number , categoria : ICategorias){
+    async updateCategoria(idCategoria : number , categoria : IUpdateCategoria): Promise<ICategorias | null>{
         Swal.fire({
             title: "Acualizando categoria...",
             allowOutsideClick: false,
@@ -150,18 +150,45 @@ export class CategoriaService extends BackendClient<ICategorias> {
         });
 
         try {
-            const create = await fetch(`${API_URL}/update/${idCategoria}`, { //PREGUNTAR
+            const response = await fetch(`${this.baseUrl}/update/${idCategoria}`, { 
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json" 
                 },
-                body: JSON.stringify(categoria), //PREGUNTAR
+                body: JSON.stringify(categoria), 
             });
 
-            if (!create.ok) {
+            if (!response.ok) {
                 throw new Error("Error al modificar la categoria");
-            } else {
-                console.log("Categoria modificada exitosamente");
+            }
+
+            const newData = await response.json();
+            return newData as ICategorias;
+
+        } finally {
+            Swal.close();
+        }
+    }
+
+    async bajaPorSucursal(idCategoria : number, idSucursal : number) : Promise<void>{
+        Swal.fire({
+            title: "Dando de baja categoria...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const response = await fetch(`${this.baseUrl}/bajaPorSucursal/${idCategoria}/${idSucursal}`, { 
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al dar de baja la categoria");
             }
 
         } finally {

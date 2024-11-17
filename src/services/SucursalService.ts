@@ -1,15 +1,17 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { ISucursal } from "../types/dtos/sucursal/ISucursal";
-const API_URL = "http://190.221.207.224:8090/sucursales";
+import { ICreateSucursal} from "../types/dtos/sucursal/ICreateSucursal";
+import { IUpdateSucursal} from "../types/dtos/sucursal/IUpdateSucursal";
+const API_URL = import.meta.env.VITE_URL_API;
 
 
-export class SucursalService extends BackendClient<ISucursal> {
-    constructor() {
-        super(`${API_URL}`);
+export class SucursalService extends BackendClient<ISucursal | ICreateSucursal | IUpdateSucursal> {
+    constructor(baseUrl : string = "sucursales") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
-    async getAllSucursales(): Promise<ISucursal[]> {
+    async getAllSucursales(): Promise<ISucursal[] | null> {
         Swal.fire({
             title: "Cargando sucursales...",
             allowOutsideClick: false, 
@@ -19,7 +21,7 @@ export class SucursalService extends BackendClient<ISucursal> {
         });
 
         try{
-            const response = await fetch(`${API_URL}`, {
+            const response = await fetch(`${this.baseUrl}`, {
                 method: "GET",
             });
 
@@ -27,15 +29,15 @@ export class SucursalService extends BackendClient<ISucursal> {
                 throw new Error("Error al cargar las sucursales");
             }
 
-            const newData : ISucursal[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ISucursal[];
         } finally {
             Swal.close(); 
         }
     }
 
     
-    async getSucursalesPorEmpresa(idEmpresa : number): Promise<ISucursal[]> {
+    async getSucursalesPorEmpresa(idEmpresa : number): Promise<ISucursal[] | null> {
         Swal.fire({
             title: "Cargando sucursales...",
             allowOutsideClick: false, 
@@ -45,7 +47,7 @@ export class SucursalService extends BackendClient<ISucursal> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/porEmpresa/${idEmpresa}`, {
+            const response = await fetch(`${this.baseUrl}/porEmpresa/${idEmpresa}`, {
                 method: "GET",
             });
 
@@ -53,14 +55,14 @@ export class SucursalService extends BackendClient<ISucursal> {
                 throw new Error("Error al cargar las sucursales de empresa id:" + idEmpresa);
             }
 
-            const newData : ISucursal[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as  ISucursal[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getIsCasaMatriz(): Promise<ISucursal>{
+    async getIsCasaMatriz(): Promise<ISucursal | null>{
         Swal.fire({
             title: "Cargando casa matriz...",
             allowOutsideClick: false, 
@@ -70,7 +72,7 @@ export class SucursalService extends BackendClient<ISucursal> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/existCasaMatriz/1`, {
+            const response = await fetch(`${this.baseUrl}/existCasaMatriz/1`, {
                 method: "GET",
             });
 
@@ -78,15 +80,14 @@ export class SucursalService extends BackendClient<ISucursal> {
                 throw new Error("Error al cargar la casa matriz");
             }
 
-            const newData : ISucursal = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as ISucursal;
         } finally {
             Swal.close(); 
         }
     }
 
-    //Create: http://190.221.207.224:8090/sucursales/create
-    async createSucursal(sucursal : ISucursal){
+    async createSucursal(sucursal : ICreateSucursal): Promise<ISucursal | null>{
         Swal.fire({
             title: "Creando sucursal...",
             allowOutsideClick: false, 
@@ -96,27 +97,26 @@ export class SucursalService extends BackendClient<ISucursal> {
         });
 
         try{
-            const create = await fetch(`${API_URL}/create`, {
+            const response = await fetch(`${this.baseUrl}/create`, {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json" 
                 },
                 body: JSON.stringify(sucursal),
             });
 
-            if (!create.ok) {
+            if (!response.ok) {
                 throw new Error("Error al crear la sucursal");
-            }else{
-                console.log("Sucursal creada exitosamente");
             }
 
+            const newData = await response.json();
+            return newData as ISucursal;
         } finally {
             Swal.close(); 
         }
     }
 
-    //EditOneSucursal: http://190.221.207.224:8090/sucursales/update/1
-    async updateSucursal(idSucursal : number, sucursal : ISucursal){
+    async updateSucursal(idSucursal : number, sucursal : ICreateSucursal): Promise<void>{
         Swal.fire({
             title: "Acualizando sucursal...",
             allowOutsideClick: false,
@@ -126,18 +126,16 @@ export class SucursalService extends BackendClient<ISucursal> {
         });
 
         try {
-            const create = await fetch(`${API_URL}/${idSucursal}`, { //PREGUNTAR
+            const update = await fetch(`${this.baseUrl}/${idSucursal}`, { 
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify(sucursal), //PREGUNTAR
+                body: JSON.stringify(sucursal),
             });
 
-            if (!create.ok) {
+            if (!update.ok) {
                 throw new Error("Error al modificar la sucursal");
-            } else {
-                console.log("Sucursal modificada exitosamente");
             }
 
         } finally {

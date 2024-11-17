@@ -1,14 +1,16 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IProductos } from "../types/dtos/productos/IProductos";
-const API_URL = "http://190.221.207.224:8090/articulos";
+import { ICreateProducto } from "../types/dtos/productos/ICreateProducto";
+import { IUpdateProducto } from "../types/dtos/productos/IUpdateProducto";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class ClienteService extends BackendClient<IProductos> {
-    constructor() {
-        super(`${API_URL}`);
+export class ProductoService extends BackendClient<IProductos | ICreateProducto | IUpdateProducto> {
+    constructor(baseUrl : string = "articulos") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
-    async getAllProductos(): Promise<IProductos[]> {
+    async getAllProductos(): Promise<IProductos[] | null> {
         Swal.fire({
             title: "Cargando productos...",
             allowOutsideClick: false, 
@@ -18,7 +20,7 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}`, {
+            const response = await fetch(`${this.baseUrl}`, {
                 method: "GET",
             });
 
@@ -26,14 +28,14 @@ export class ClienteService extends BackendClient<IProductos> {
                 throw new Error("Error al cargar los productos");
             }
 
-            const newData : IProductos[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as  IProductos[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getProductoById(idProducto : number): Promise<IProductos>{
+    async getProductoById(idProducto : number): Promise<IProductos | null>{
         Swal.fire({
             title: "Cargando producto...",
             allowOutsideClick: false, 
@@ -43,7 +45,7 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/${idProducto}`, {
+            const response = await fetch(`${this.baseUrl}/${idProducto}`, {
                 method: "GET",
             });
 
@@ -51,14 +53,14 @@ export class ClienteService extends BackendClient<IProductos> {
                 throw new Error("Error al cargar el producto");
             }
 
-            const newData : IProductos = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as  IProductos;
         } finally {
             Swal.close(); 
         }
     }
 
-    async getProductosPorSucursal(idSucursal : number): Promise<IProductos[]> {
+    async getProductosPorSucursal(idSucursal : number): Promise<IProductos[] | null> {
         Swal.fire({
             title: "Cargando productos...",
             allowOutsideClick: false, 
@@ -68,7 +70,7 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/porSucursal/${idSucursal}`, {
+            const response = await fetch(`${this.baseUrl}/porSucursal/${idSucursal}`, {
                 method: "GET",
             });
 
@@ -76,14 +78,14 @@ export class ClienteService extends BackendClient<IProductos> {
                 throw new Error("Error al cargar los productos");
             }
 
-            const newData : IProductos[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as  IProductos[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getPagedPorSucursal(idSucursal : number): Promise<IProductos> {
+    async getPagedPorSucursal(idSucursal : number): Promise<IProductos | null> {
         Swal.fire({
             title: "Cargando productos...",
             allowOutsideClick: false, 
@@ -93,7 +95,7 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/pagedPorSucursal/${idSucursal}`, {
+            const response = await fetch(`${this.baseUrl}/pagedPorSucursal/${idSucursal}`, {
                 method: "GET",
             });
 
@@ -101,15 +103,14 @@ export class ClienteService extends BackendClient<IProductos> {
                 throw new Error("Error al cargar los productos");
             }
 
-            const newData : IProductos = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as IProductos;
         } finally {
             Swal.close(); 
         }
     }
 
-    //"CREATE "/articulos/create"
-    async createProducto(producto : IProductos){
+    async createProducto(producto : ICreateProducto): Promise<IProductos | null>{
         Swal.fire({
             title: "Creando producto...",
             allowOutsideClick: false, 
@@ -119,27 +120,26 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try{
-            const create = await fetch(`${API_URL}/create`, {
+            const response = await fetch(`${this.baseUrl}/create`, {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(producto),
             });
 
-            if (!create.ok) {
+            if (!response.ok) {
                 throw new Error("Error al crear el producto");
-            }else{
-                console.log("Producto creado exitosamente");
             }
 
+            const newData = await response.json();
+            return newData as IProductos;
         } finally {
             Swal.close(); 
         }
     }
 
-    //UPDATE
-    async updateProducto(idProducto : number , producto : IProductos){
+    async updateProducto(idProducto : number , producto : IUpdateProducto): Promise<void>{
         Swal.fire({
             title: "Acualizando producto...",
             allowOutsideClick: false,
@@ -149,20 +149,17 @@ export class ClienteService extends BackendClient<IProductos> {
         });
 
         try {
-            const create = await fetch(`${API_URL}/update/${idProducto}`, { //PREGUNTAR
+            const response = await fetch(`${API_URL}/update/${idProducto}`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json" //PREGUNTAR
+                    "Content-Type": "application/json" 
                 },
-                body: JSON.stringify(producto), //PREGUNTAR
+                body: JSON.stringify(producto), 
             });
 
-            if (!create.ok) {
+            if (!response.ok) {
                 throw new Error("Error al modificar el producto");
-            } else {
-                console.log("Producto modificado exitosamente");
             }
-
         } finally {
             Swal.close();
         }
