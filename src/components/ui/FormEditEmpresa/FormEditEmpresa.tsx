@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Row } from "react-bootstrap";
 import { useForm } from "../../../hooks/useForm";
 import styles from "./FormEditEmprese.module.css";
-import { IEmpresa } from "../../../types/IEmpresa";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 interface FormEditEmpresaProps {
   empresa: IEmpresa;
@@ -17,23 +17,23 @@ export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
   const [failTry, setFailTry] = useState<boolean>(false);
 
   const { values, handleChanges } = useForm({
-    name: empresa.name,
-    description: empresa.description,
+    nombre: empresa.nombre,
+    razonSocial: empresa.razonSocial,
     cuit: empresa.cuit,
   });
 
-  const { name, description, cuit } = values;
+  const { nombre, razonSocial, cuit } = values;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !description || !cuit) {
+    if (!nombre || !razonSocial || !cuit) {
       setFailTry(true);
       return;
     }
 
-    empresa.name = name;
-    empresa.description = description;
+    empresa.nombre = nombre;
+    empresa.razonSocial = razonSocial;
     empresa.cuit = cuit;
 
     setValidated(true);
@@ -55,7 +55,7 @@ export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               className={`${
-                failTry && name === ""
+                failTry && nombre === ""
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}
@@ -63,8 +63,8 @@ export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
               type="text"
               placeholder="nombre"
               onChange={handleChanges}
-              name="name"
-              value={name}
+              name="nombre"
+              value={nombre}
             />
             <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
@@ -77,16 +77,16 @@ export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
             <Form.Label>Descripción</Form.Label>
             <Form.Control
               className={`${
-                failTry && description === ""
+                failTry && razonSocial === ""
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}
               required
               type="text"
-              placeholder="Descripción"
+              placeholder="Razon Social"
               onChange={handleChanges}
-              name="description"
-              value={description}
+              name="razonSocial"
+              value={razonSocial}
             />
             <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
@@ -96,7 +96,7 @@ export const FormEditEmpresa: React.FC<FormEditEmpresaProps> = ({
             <Form.Label>CUIT</Form.Label>
             <Form.Control
               className={`${
-                failTry && cuit === ""
+                failTry && cuit === 0
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}

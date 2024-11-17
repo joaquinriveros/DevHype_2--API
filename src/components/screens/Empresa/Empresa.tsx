@@ -8,18 +8,21 @@ import { SucursalCard } from "../../ui/SucursalCard/SucursalCard";
 import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
-import { ClienteService } from "../../../services/EmrpesaService";
+import { EmpresaService } from "../../../services/EmpresaService";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
-  const [empresa, setEmpresa] = useState<IEmpresa[] | null>(null);
-  const [selectedViewEmpresa, setSelectedViewEmpresa] = useState<IEmpresa | null>(null);
-  const [selectedEditEmpresa, setSelectedEditEmpresa] = useState<IEmpresa | null>(null);
-  const [isFormEmpresaVisible, setIsFormEmpresaVisible] = useState<boolean>(false);
-  const clienteService = new ClienteService();
-
+  const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Estado para el indicador de carga
+  const [selectedViewEmpresa, setSelectedViewEmpresa] =
+    useState<IEmpresa | null>(null);
+  const [selectedEditEmpresa, setSelectedEditEmpresa] =
+    useState<IEmpresa | null>(null);
+  const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
+    useState<boolean>(false);
   const cuit = useParams().empresaCuit;
+  const empresaService = new EmpresaService();
 
   const toggleFormEmpresa = () => {
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
@@ -38,17 +41,43 @@ export const Empresa = () => {
     setSelectedEditEmpresa(null);
   };
 
+  //traemos las empresas
+  const traerEmpresas = async () => {
+    try {
+      const result = await empresaService.getAllEmpresas();
+      setEmpresas(result);
+    } catch (error) {
+      console.error("Error al obtener las empresas:", error);
+    }
+  };
+
   useEffect(() => {
-    async function cargarEmpresas() {
-      const result = await clienteService.getAll();
-      result ? setEmpresa(result) : setEmpresa(null);
+    const fetchData = async () => {
+      setIsLoading(true); // Muestra el mensaje de carga al inicio
+      try {
+        await traerEmpresas(); // Trae todas las empresas y actualiza el estado
+        
+        // Ahora busca la empresa específica por su cuit directamente en el resultado obtenido
+        const resultEmpresa = empresas.find(
+          (emp) => emp.cuit.toString() === cuit
+        );
+        setEmpresa(resultEmpresa || null); // Si no se encuentra, setea null
+      } catch (error) {
+        console.error("Error al obtener las empresas:", error);
+        setEmpresa(null); // En caso de error, setea empresa como null
+      } finally {
+        setIsLoading(false); // Oculta el mensaje de carga al finalizar
+      }
     };
-    cargarEmpresas()
-  });
+  
+    fetchData();
+  }, [cuit]); // Se ejecuta cada vez que cambia el cuit
 
   return (
     <>
-      {empresa ? (
+      {isLoading ? ( // Mostrar un mensaje de carga mientras isLoading es true
+        <p>Cargando...</p>
+      ) : empresa ? (
         <div className={"aside-main__container"}>
           {isFormEmpresaVisible && (
             <div className="overlay">

@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./SucursalCard.module.css";
-import { ISucursal } from "../../../types/ISucursal";
 import { FC } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBuilding, faPen, faEye } from "@fortawesome/free-solid-svg-icons";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 
 interface ISucursalCard{
   sucursal: ISucursal;
@@ -13,14 +13,14 @@ export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
 
   const navigate = useNavigate();
   const handleCategoriesNavigate = () => {
-    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.idSucursal}/productos`)
+    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.id}/productos`)
   };
 
   return (
     <div className={styles.card} onClick={handleCategoriesNavigate}>
-      <h3 className={styles.card__tittle}>{sucursal.name}</h3>
+      <h3 className={styles.card__tittle}>{sucursal.nombre}</h3>
       <img
-        src={sucursal.url}
+        src={sucursal.logo}
         className={styles.card__imagen}
         alt="Sucursal img"
       />

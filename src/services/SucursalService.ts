@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { ISucursal } from "../types/dtos/sucursal/ISucursal";
-const API_URL = "http://localhost:8090/sucursales";
+const API_URL = "http://190.221.207.224:8090/sucursales";
 
 
 export class SucursalService extends BackendClient<ISucursal> {

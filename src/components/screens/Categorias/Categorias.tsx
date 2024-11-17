@@ -1,23 +1,26 @@
 import styles from "./Categorias.module.css";
 import { AsideAdministracion } from "../../ui/AsideAdministracion/AsideAdministracion";
-import { IEmpresa } from "../../../types/IEmpresa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ISucursal } from "../../../types/ISucursal";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
+import { EmpresaService } from "../../../services/EmpresaService";
 
 export const Categorias = () => {
+  const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
   const [empresa, setEmpresa] = useState<null | IEmpresa>(null);
   const [sucursal, setSucursal] = useState<null | ISucursal>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { empresaCuit, sucursalId } = useParams();
+  
 
   const getParams = () => {
-    const resultEmpresa = empresas.find((emp) => emp.cuit === empresaCuit);
+    const resultEmpresa = empresas.find((emp) => emp.cuit.toString() === empresaCuit);
     resultEmpresa ? setEmpresa(resultEmpresa) : setEmpresa(null);
 
     const resultSucursal = empresa?.sucursales.find(
-      (suc) => suc.idSucursal === sucursalId
+      (suc) => suc.id.toString() === sucursalId
     );
     resultSucursal ? setSucursal(resultSucursal) : setSucursal(null);
     setIsLoading(false)
