@@ -9,11 +9,14 @@ import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { EmpresaService } from "../../../services/EmpresaService";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
+import { SucursalService } from "../../../services/SucursalService";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
+  const [sucursales, setSeucursales] = useState<ISucursal[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Estado para el indicador de carga
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
@@ -21,8 +24,10 @@ export const Empresa = () => {
     useState<IEmpresa | null>(null);
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
+
   const cuit = useParams().empresaCuit;
   const empresaService = new EmpresaService();
+  const sucursalService = new SucursalService();
 
   const toggleFormEmpresa = () => {
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
@@ -42,42 +47,57 @@ export const Empresa = () => {
   };
 
   //traemos las empresas
-  const traerEmpresas = async () => {
+  const traerEmpresas = async (): Promise<IEmpresa[]> => {
     try {
       const result = await empresaService.getAllEmpresas();
-      setEmpresas(result);
+      return result; // Devuelve los datos obtenidos
     } catch (error) {
-      console.error("Error al obtener las empresas:", error);
+      console.error("Error al buscar la empresa:", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  };
+
+  //traemos las empresas
+  const traerSucursales = async (idEmpresa: number): Promise<ISucursal[]> => {
+    try {
+      const result = await sucursalService.getSucursalesPorEmpresa(idEmpresa);
+      return result || []; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar sucursales:", error);
+      return []; // Devuelve un array vacío en caso de error
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true); // Muestra el mensaje de carga al inicio
       try {
-        await traerEmpresas(); // Trae todas las empresas y actualiza el estado
-        
-        // Ahora busca la empresa específica por su cuit directamente en el resultado obtenido
-        const resultEmpresa = empresas.find(
+        const result = await traerEmpresas(); // Trae todas las empresas y actualiza el estado
+        console.log(result);
+        const resultEmpresa = result.find(
           (emp) => emp.cuit.toString() === cuit
         );
+
+        const resultSucursales = resultEmpresa?.id
+          ? await traerSucursales(resultEmpresa.id)
+          : [];
+
         setEmpresa(resultEmpresa || null); // Si no se encuentra, setea null
+        setEmpresas(result); // Actualiza el estado con todas las empresas
+        setSeucursales(resultSucursales)
       } catch (error) {
-        console.error("Error al obtener las empresas:", error);
+        console.error("Error al obtener los datos:", error);
         setEmpresa(null); // En caso de error, setea empresa como null
       } finally {
         setIsLoading(false); // Oculta el mensaje de carga al finalizar
       }
     };
-  
+
     fetchData();
   }, [cuit]); // Se ejecuta cada vez que cambia el cuit
 
   return (
     <>
-      {isLoading ? ( // Mostrar un mensaje de carga mientras isLoading es true
-        <p>Cargando...</p>
-      ) : empresa ? (
+      {isLoading ? null : empresa ? ( // Mostrar un mensaje de carga mientras isLoading es true
         <div className={"aside-main__container"}>
           {isFormEmpresaVisible && (
             <div className="overlay">
@@ -117,7 +137,7 @@ export const Empresa = () => {
             <div className={styles.empresa__header}>
               <div className={styles.empresa__tittleContainer}>
                 <h2 className={styles.empresa__tittle}>
-                  Sucursales de {"Empresa"}
+                  Sucursales de {empresa.nombre}
                 </h2>
               </div>
               <div className={styles.empresa__bottonContainer}>
@@ -126,8 +146,8 @@ export const Empresa = () => {
             </div>
             <div className={styles.empresa__content}>
               <div className={styles.empresa__cardsContainer}>
-                {empresa.sucursales.map((sucursal) => (
-                  <SucursalCard sucursal={sucursal} />
+                {sucursales.map((suc) => (
+                  <SucursalCard sucursal={suc} />
                 ))}
               </div>
             </div>
