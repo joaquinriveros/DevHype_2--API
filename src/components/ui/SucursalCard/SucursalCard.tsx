@@ -1,29 +1,35 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./SucursalCard.module.css";
-import { ISucursal } from "../../../types/ISucursal";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBuilding, faPen, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding, faPen, faEye, faImage } from "@fortawesome/free-solid-svg-icons";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 
 interface ISucursalCard{
   sucursal: ISucursal;
 }
 export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
+  const [isImageError, setIsImageError] = useState(false);
   const { empresaCuit } = useParams();
 
   const navigate = useNavigate();
   const handleCategoriesNavigate = () => {
-    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.idSucursal}/productos`)
+    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.id}/productos`)
   };
 
   return (
     <div className={styles.card} onClick={handleCategoriesNavigate}>
-      <h3 className={styles.card__tittle}>{sucursal.name}</h3>
-      <img
-        src={sucursal.url}
-        className={styles.card__imagen}
-        alt="Sucursal img"
-      />
+      <h3 className={styles.card__tittle}>{sucursal.nombre}</h3>
+      {isImageError || !sucursal.logo ? (
+        <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
+      ) : (
+        <img
+          src={sucursal.logo}
+          className={styles.card__imagen}
+          alt="Sucursal img"
+          onError={() => setIsImageError(true)} // Si hay un error, activa el estado
+        />
+      )}
       <div className={styles.card__buttonContainer}>
         <button className='boxStyle__icon'>
         <FontAwesomeIcon icon={faBuilding} size="lg" />

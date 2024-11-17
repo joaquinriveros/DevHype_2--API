@@ -1,9 +1,9 @@
 import { faPen, faEye } from "@fortawesome/free-solid-svg-icons";
 import styles from "./EmpresaListItem.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IEmpresa } from "../../../types/IEmpresa";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 
 interface IListEmpresas {
   empresas: IEmpresa[];
@@ -22,10 +22,10 @@ export const EmpresaListItem: FC<IListEmpresas> = ({ empresas, onViewEmpresClick
         <div
           className={styles.item__container}
           onClick={() => {
-            handleEmpresaNavigate(empresa.cuit);
+            handleEmpresaNavigate(empresa.cuit.toString());
           }}
         >
-          <h4 className={styles.item__tittle}>{empresa.name}</h4>
+          <h4 className={styles.item__tittle}>{empresa.nombre}</h4>
           <div className={styles.item__buttonContainer}>
             <button
               className="boxStyle__icon"

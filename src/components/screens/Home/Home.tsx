@@ -1,21 +1,22 @@
 import styles from "./Home.module.css";
 import { EmpresaListItem } from "../../ui/EmpresaListItems/EmpresaListItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormEmpresa } from "../../ui/FormEmpresa/FormEmpresa";
 import { EmpresaView } from "../../ui/EmpresaView/EmpresaView";
 import FormEditEmpresa from "../../ui/FormEditEmpresa/FormEditEmpresa";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
+import { EmpresaService } from "../../../services/EmpresaService";
 
 export const Home = () => {
-  // Aca seria un listado de las empresas, pero todavia no esta asignado
-  const [empresas, setEmpresas] =
-    useState<IEmpresa[]>([]);
+  const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
   const [selectedEditEmpresa, setSelectedEditEmpresa] =
     useState<IEmpresa | null>(null);
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
+
+  const empresaService = new EmpresaService();
 
   const handleEmpresClickView = (empresaClicked: IEmpresa) => {
     setSelectedViewEmpresa(empresaClicked);
@@ -29,8 +30,24 @@ export const Home = () => {
   const closeEditEmpresa = () => {
     setSelectedEditEmpresa(null);
   };
-  const toggleFormEmpresa = () =>
+  const toggleFormEmpresa = () => {
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
+  };
+
+  // pruba de getAllEmpresas
+  const traerEmpresas = async () => {
+    try {
+      const result = await empresaService.getAllEmpresas();
+      console.log(result)
+      setEmpresas(result);
+    } catch (error) {
+      console.error("Error al obtener las empresas:", error);
+    }
+  };
+
+  useEffect(() => {
+    traerEmpresas();
+  }, []); // Array vacío para que se ejecute solo al montar
 
   return (
     <>
