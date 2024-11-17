@@ -1,63 +1,122 @@
-import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
-const API_URL = "http://190.221.207.224:8090/empresas";
+import { ICreateEmpresaDto } from "../types/dtos/empresa/ICreateEmpresaDto";
+import { IUpdateEmpresaDto } from "../types/dtos/empresa/IUpdateEmpresaDto";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class EmpresaService extends BackendClient<IEmpresa> {
-    
-    constructor() {
-        super(`${API_URL}`);
+export class EmpresaService extends BackendClient<IEmpresa | ICreateEmpresaDto | IUpdateEmpresaDto> {
+    constructor(baseUrl : string = "empresas") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
 
-    async getAllEmpresas(): Promise<IEmpresa[]> {
-        Swal.fire({
-            title: "Cargando empresas...",
-            allowOutsideClick: false, 
-            didOpen: () => {
-                Swal.showLoading(); 
-            },
-        });
+    // async getAllEmpresas(): Promise<IEmpresa[]> {
+    //     Swal.fire({
+    //         title: "Cargando empresas...",
+    //         allowOutsideClick: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         },
+    //     });
 
-        try{
-            const response = await fetch(`${API_URL}`, {
-                method: "GET",
-            });
+    //     try {
+    //         const response = await fetch(`${API_URL}`, {
+    //             method: "GET",
+    //         });
 
-            if (!response.ok) {
-                throw new Error("Error al cargar las empresas");
-            }
+    //         if (!response.ok) {
+    //             throw new Error("Error al cargar las empresas");
+    //         }
 
-            const newData : IEmpresa[] = await response.json();
-            return newData;
-        } finally {
-            Swal.close(); 
-        }
-    }
+    //         const newData: IEmpresa[] = await response.json();
+    //         return newData;
+    //     } finally {
+    //         Swal.close();
+    //     }
+    // }
 
-    async getEmpresaById(idEmpresa : number): Promise<IEmpresa> {
-        Swal.fire({
-            title: "Buscando empresa...",
-            allowOutsideClick: false, 
-            didOpen: () => {
-                Swal.showLoading(); 
-            },
-        });
+    // async getEmpresaById(idEmpresa: number): Promise<IEmpresa> {
+    //     Swal.fire({
+    //         title: "Buscando empresa...",
+    //         allowOutsideClick: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         },
+    //     });
 
-        try{
-            const response = await fetch(`${API_URL}/${idEmpresa}`, {
-                method: "GET",
-            });
+    //     try {
+    //         const response = await fetch(`${API_URL}/${idEmpresa}`, {
+    //             method: "GET",
+    //         });
 
-            if (!response.ok) {
-                throw new Error("Error al cargar la empresa id:" + idEmpresa);
-            }
+    //         if (!response.ok) {
+    //             throw new Error("Error al cargar la empresa id:" + idEmpresa);
+    //         }
 
-            const newData : IEmpresa = await response.json();
-            return newData;
-        } finally {
-            Swal.close(); 
-        }
-    }
+    //         const newData: IEmpresa = await response.json();
+    //         return newData;
+    //     } finally {
+    //         Swal.close();
+    //     }
+    // }
 
+    // //CREATE
+    // async createEmpresa(empresa: IEmpresa) {
+    //     Swal.fire({
+    //         title: "Creando empresa...",
+    //         allowOutsideClick: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         },
+    //     });
+
+    //     try {
+    //         const create = await fetch(`${API_URL}`, { //PREGUNTAR
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json" //PREGUNTAR
+    //             },
+    //             body: JSON.stringify(empresa), //PREGUNTAR
+    //         });
+
+    //         if (!create.ok) {
+    //             throw new Error("Error al crear la empresa");
+    //         } else {
+    //             console.log("Empresa creada exitosamente");
+    //         }
+
+    //     } finally {
+    //         Swal.close();
+    //     }
+    // }
+
+    // //UPDATE
+    // async updateEmpresa( idEmpresa: number, empresa : IEmpresa){
+    //     Swal.fire({
+    //         title: "Acualizando empresa...",
+    //         allowOutsideClick: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         },
+    //     });
+
+    //     try {
+    //         const create = await fetch(`${API_URL}/${idEmpresa}`, { //PREGUNTAR
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json" //PREGUNTAR
+    //             },
+    //             body: JSON.stringify(empresa), //PREGUNTAR
+    //         });
+
+    //         if (!create.ok) {
+    //             throw new Error("Error al modificar la empresa");
+    //         } else {
+    //             console.log("Empresa modificada exitosamente");
+    //         }
+
+    //     } finally {
+    //         Swal.close();
+    //     }
+    // }
 }

@@ -1,15 +1,16 @@
 import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IAlergenos } from "../types/dtos/alergenos/IAlergenos";
-// Obtenemos la URL base de la API desde las variables de entorno
-const API_URL = "http://190.221.207.224:8090/alergenos";
+import { ICreateAlergeno } from "../types/dtos/alergenos/ICreateAlergeno";
+import { IUpdateAlergeno } from "../types/dtos/alergenos/IUpdateAlergeno";
+const API_URL = import.meta.env.VITE_URL_API;
 
-export class AlegenoService extends BackendClient<IAlergenos> {
-    constructor() {
-        super(`${API_URL}`);
+export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno | IUpdateAlergeno> {
+    constructor(baseUrl : string = "alergenos") {
+        super(`${API_URL}/${baseUrl}`);
     }
 
-    async getAllAlergenos(): Promise<IAlergenos[]> {
+    async getAllAlergenos(): Promise<IAlergenos[] | null> {
         Swal.fire({
             title: "Cargando alergenos...",
             allowOutsideClick: false, 
@@ -19,7 +20,7 @@ export class AlegenoService extends BackendClient<IAlergenos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}`, {
+            const response = await fetch(`${this.baseUrl}`, {
                 method: "GET",
             });
 
@@ -27,39 +28,14 @@ export class AlegenoService extends BackendClient<IAlergenos> {
                 throw new Error("Error al cargar los alergenos");
             }
 
-            const newData : IAlergenos[] = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as IAlergenos[];
         } finally {
             Swal.close(); 
         }
     }
 
-    async getAllCategoriaPorSucursal(idSucursal : number): Promise<IAlergenos[]> {
-        Swal.fire({
-            title: "Cargando categorías de la sucursal...",
-            allowOutsideClick: false, 
-            didOpen: () => {
-                Swal.showLoading(); 
-            },
-        });
-
-        try{
-            const response = await fetch(`${API_URL}/allCategoriasPorSucursal/${idSucursal}`, {
-                method: "GET",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al cargar los alergenos id: " + idSucursal);
-            }
-
-            const newData : IAlergenos[] = await response.json();
-            return newData;
-        } finally {
-            Swal.close(); 
-        }
-    }
-
-    async getAlergenoById(idAlergeno : number): Promise<IAlergenos> {
+    async getAlergenoById(idAlergeno : number): Promise<IAlergenos | null> {
         Swal.fire({
             title: "Buscando alergeno...",
             allowOutsideClick: false, 
@@ -69,19 +45,74 @@ export class AlegenoService extends BackendClient<IAlergenos> {
         });
 
         try{
-            const response = await fetch(`${API_URL}/${idAlergeno}`, {
+            const response = await fetch(`${this.baseUrl}/${idAlergeno}`, {
                 method: "GET",
             });
 
             if (!response.ok) {
-                throw new Error("Error al cargar el alergeno id:" + idAlergeno);
+                throw new Error("Error al cargar el alergeno");
             }
 
-            const newData : IAlergenos = await response.json();
-            return newData;
+            const newData = await response.json();
+            return newData as IAlergenos;
         } finally {
             Swal.close(); 
         }
     }
 
+    async createAlergeneo(alergeno : ICreateAlergeno): Promise<IAlergenos | null>{
+        Swal.fire({
+            title: "Creando alergeno...",
+            allowOutsideClick: false, 
+            didOpen: () => {
+                Swal.showLoading(); 
+            },
+        });
+
+        try{
+            const response = await fetch(`${this.baseUrl}`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify(alergeno),
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al crear el alergeno");
+            }
+
+            const newData = await response.json();
+            return newData as IAlergenos;
+        } finally {
+            Swal.close(); 
+        }
+    }
+
+    async updateAlergeno(idAlergeno : number, alergeno : IUpdateAlergeno): Promise<void>{
+        Swal.fire({
+            title: "Acualizando alergeno...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const create = await fetch(`${this.baseUrl}/${idAlergeno}`, { 
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify(alergeno), 
+            });
+
+            if (!create.ok) {
+                throw new Error("Error al modificar el alergeno");
+            }
+
+        } finally {
+            Swal.close();
+        }
+    }
 }
