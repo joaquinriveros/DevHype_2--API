@@ -16,7 +16,7 @@ export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
-  const [sucursales, setSeucursales] = useState<ISucursal[]>([]);
+  const [sucursales, setSucursales] = useState<ISucursal[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Estado para el indicador de carga
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
@@ -30,6 +30,8 @@ export const Empresa = () => {
   const sucursalService = new SucursalService();
 
   const toggleFormEmpresa = () => {
+    if (isFormEmpresaVisible) {
+    }
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
   };
 
@@ -68,30 +70,31 @@ export const Empresa = () => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const result = await traerEmpresas(); // Trae todas las empresas y actualiza el estado
+      console.log(result);
+      const resultEmpresa = result
+        .filter((emp) => emp.cuit) // Filtra las empresas que tienen un cuit válido
+        .find((emp) => emp.cuit.toString() === cuit);
+
+      console.log(resultEmpresa);
+
+      const resultSucursales = resultEmpresa?.id
+        ? await traerSucursales(resultEmpresa.id)
+        : [];
+
+      setEmpresa(resultEmpresa || null); // Si no se encuentra, setea null
+      setEmpresas(result); // Actualiza el estado con todas las empresas
+      setSucursales(resultSucursales);
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+      setEmpresa(null); // En caso de error, setea empresa como null
+    } finally {
+      setIsLoading(false); // Oculta el mensaje de carga al finalizar
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await traerEmpresas(); // Trae todas las empresas y actualiza el estado
-        console.log(result);
-        const resultEmpresa = result.find(
-          (emp) => emp.cuit.toString() === cuit
-        );
-
-        const resultSucursales = resultEmpresa?.id
-          ? await traerSucursales(resultEmpresa.id)
-          : [];
-
-        setEmpresa(resultEmpresa || null); // Si no se encuentra, setea null
-        setEmpresas(result); // Actualiza el estado con todas las empresas
-        setSeucursales(resultSucursales)
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-        setEmpresa(null); // En caso de error, setea empresa como null
-      } finally {
-        setIsLoading(false); // Oculta el mensaje de carga al finalizar
-      }
-    };
-
     fetchData();
   }, [cuit]); // Se ejecuta cada vez que cambia el cuit
 
@@ -145,11 +148,17 @@ export const Empresa = () => {
               </div>
             </div>
             <div className={styles.empresa__content}>
-              <div className={styles.empresa__cardsContainer}>
-                {sucursales.map((suc) => (
-                  <SucursalCard sucursal={suc} />
-                ))}
-              </div>
+              {sucursales && sucursales.length > 0 ? (
+                <div className={styles.empresa__cardsContainer}>
+                  {sucursales.map((suc) => (
+                    <SucursalCard sucursal={suc} />
+                  ))}
+                </div>
+              ) : (
+                <h3 className={styles.empresa__noSucursales}>
+                  No hay sucursales
+                </h3>
+              )}
             </div>
           </div>
         </div>
