@@ -36,7 +36,7 @@ export class EmpresaService extends BackendClient<IEmpresa | ICreateEmpresaDto |
          }
      }
 
-     async getEmpresaById(idEmpresa: number): Promise<IEmpresa> {
+     async getEmpresaById(idEmpresa: number): Promise<IEmpresa | null> {
          Swal.fire({
              title: "Buscando empresa...",
              allowOutsideClick: false,

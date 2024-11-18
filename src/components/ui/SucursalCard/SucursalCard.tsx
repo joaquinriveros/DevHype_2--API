@@ -10,11 +10,11 @@ interface ISucursalCard{
 }
 export const SucursalCard: FC<ISucursalCard> = ({ sucursal }) => {
   const [isImageError, setIsImageError] = useState(false);
-  const { empresaCuit } = useParams();
+  const idEmpresa = Number(useParams().empresaId)
 
   const navigate = useNavigate();
   const handleCategoriesNavigate = () => {
-    navigate(`/empresa/${empresaCuit}/sucursal/${sucursal.id}/productos`)
+    navigate(`/empresa/${idEmpresa}/sucursal/${sucursal.id}/productos`)
   };
 
   return (

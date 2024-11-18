@@ -15,7 +15,7 @@ export const AsideAdministracion: FC<IAside> = ({empresa, sucursal}) => {
   
   return (
     <aside className={styles.asideCategories}>
-      <NavLink to={`/empresa/${empresa.cuit}`} className={styles.asideCategories__backContainer}>
+      <NavLink to={`/empresa/${empresa.id}`} className={styles.asideCategories__backContainer}>
         <div className={styles.asideCategories__backIcon}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </div>
@@ -33,7 +33,7 @@ export const AsideAdministracion: FC<IAside> = ({empresa, sucursal}) => {
         <h2 style={{ textTransform: "capitalize", textAlign: "center"}}>Administración</h2>
         <nav className={styles.asideCategories__linkContainer}>
           <NavLink
-            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.id}/alergenos`}
+            to={`/empresa/${empresa.id}/sucursal/${sucursal.id}/alergenos`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }
@@ -41,7 +41,7 @@ export const AsideAdministracion: FC<IAside> = ({empresa, sucursal}) => {
             Alergenos
           </NavLink>
           <NavLink
-            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.id}/categorias`}
+            to={`/empresa/${empresa.id}/sucursal/${sucursal.id}/categorias`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }
@@ -49,7 +49,7 @@ export const AsideAdministracion: FC<IAside> = ({empresa, sucursal}) => {
             Categorias
           </NavLink>
           <NavLink
-            to={`/empresa/${empresa.cuit}/sucursal/${sucursal.id}/productos`}
+            to={`/empresa/${empresa.id}/sucursal/${sucursal.id}/productos`}
             className={({ isActive }) =>
               isActive ? `${styles.link} ${styles.linkActive}` : styles.link
             }
