@@ -4,6 +4,8 @@ import { useForm } from "../../../hooks/useForm";
 import styles from "./FormEmprese.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
+import { ICreateEmpresaDto } from "../../../types/dtos/empresa/ICreateEmpresaDto";
+import { EmpresaService } from "../../../services/EmpresaService";
 
 interface FormEmpresaProps {
   onClose: () => void; // Prop para cerrar el formulario
@@ -14,10 +16,12 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
   const [failTry, setFailTry] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null);
 
+  const empresaService = new EmpresaService();
+
   const { values, handleChanges } = useForm({
     name: "",
     razonSocial: "",
-    cuit: 0,
+    cuit: "",
     logo: "",
   });
 
@@ -26,22 +30,28 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !razonSocial || !cuit || !logo) {
+    console.log("Formulario enviado con:", { name, razonSocial, cuit, logo }); // visualizacion del estado
+
+    if (!name.trim() || !razonSocial.trim() || !cuit) {
       setFailTry(true);
       return;
     }
 
-    // const newEmpresa: IEmpresa = {
-    //   nombre: name,
-    //   razonSocial: razonSocial,
-    //   cuit: cuit,
-    //   logo: logo,
-    //   sucursales: [],
-    // };
-    // empresas.push(newEmpresa);
+    const newEmpresa: ICreateEmpresaDto = {
+      nombre: name,
+      razonSocial: razonSocial,
+      cuit: Number(cuit),
+      logo: logo === "" ? null : logo,
+    };
 
-    setValidated(true);
-    onClose();
+    try {
+      empresaService.createEmpresa(newEmpresa);
+      setValidated(true);
+      onClose();
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      setFailTry(true);
+    }
   };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]; // Obtiene el primer archivo
@@ -109,12 +119,12 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
             <Form.Label>CUIT</Form.Label>
             <Form.Control
               className={`${
-                failTry && cuit === 0
+                failTry && cuit === ""
                   ? "form__inputText-fail"
                   : "form__inputText"
               }`}
               required
-              type="text"
+              type="number"
               placeholder="CUIT"
               onChange={handleChanges}
               name="cuit"

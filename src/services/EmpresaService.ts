@@ -62,7 +62,7 @@ export class EmpresaService extends BackendClient<IEmpresa | ICreateEmpresaDto |
      }
 
      //CREATE
-     async createEmpresa(empresa: IEmpresa) {
+     async createEmpresa(empresa: ICreateEmpresaDto) {
          Swal.fire({
              title: "Creando empresa...",
              allowOutsideClick: false,
@@ -92,7 +92,7 @@ export class EmpresaService extends BackendClient<IEmpresa | ICreateEmpresaDto |
      }
 
      //UPDATE
-     async updateEmpresa( idEmpresa: number, empresa : IEmpresa){
+     async updateEmpresa( idEmpresa: number, empresa : IUpdateEmpresaDto){
          Swal.fire({
              title: "Acualizando empresa...",
              allowOutsideClick: false,
