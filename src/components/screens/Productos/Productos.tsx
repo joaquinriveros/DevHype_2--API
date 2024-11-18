@@ -7,68 +7,124 @@ import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 import { IProductos } from "../../../types/dtos/productos/IProductos";
+import { EmpresaService } from "../../../services/EmpresaService";
+import { SucursalService } from "../../../services/SucursalService";
+import { ProductoService } from "../../../services/ProductoService";
+import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
+import { CategoriaService } from "../../../services/CategoriaService";
 
 export const Productos = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [productsFiltered, setProductsFiltered] = useState<IProductos[]>([]);
+  const [productos, setProductos] = useState<IProductos[]>([]);
+  const [categorias, setCategorias] = useState<ICategorias[]>([]);
   const [empresa, setEmpresa] = useState<null | IEmpresa>(null);
   const [sucursal, setSucursal] = useState<null | ISucursal>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { empresaCuit, sucursalId } = useParams();
 
-  // esta const de empresas es para dar una idea, luego se tiene que pasar
-  const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
+  const empresaService = new EmpresaService();
+  const sucursalService = new SucursalService();
+  const productoService = new ProductoService();
+  const categoriaService = new CategoriaService();
+  const idEmpresa = Number(useParams().empresaId);
+  const idSucursal = Number(useParams().sucursalId);
 
-  const getParams = () => {
-    const resultEmpresa = empresas.find(
-      (emp) => emp.cuit.toString() === empresaCuit
-    );
-    resultEmpresa ? setEmpresa(resultEmpresa) : setEmpresa(null);
-
-    const resultSucursal = empresa?.sucursales.find(
-      (suc) => suc.id.toString() === sucursalId
-    );
-    resultSucursal ? setSucursal(resultSucursal) : setSucursal(null);
-    setIsLoading(false);
-  };
-
-  const getAllProducts = () => {
-    const result: IProductos[] = [];
-
-    if (sucursal !== null) {
-      sucursal.categorias.forEach((cat) => {
-        result.push(...cat.articulos);
-      });
+  // Buscamos la empresa
+  const buscarEmpresa = async (idEmpresa: number): Promise<IEmpresa | null> => {
+    try {
+      const result = await empresaService.getEmpresaById(idEmpresa);
+      return result; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar la empresa:", error);
+      return null; // Devuelve un array vacío en caso de error
     }
-    setProductsFiltered(result);
   };
 
-  /* Productos ejemplo */
+  //traemos las sucursales
+  const buscarSucursal = async (
+    idSucursal: number
+  ): Promise<ISucursal | null> => {
+    try {
+      const result = await sucursalService.getSucursalById(idSucursal);
+      return result || null; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar sucursales:", error);
+      return null; // Devuelve un array vacío en caso de error
+    }
+  };
 
+  // Obtener los productos
+  const traerProductos = async (idSucursal: number): Promise<IProductos[]> => {
+    try {
+      const result = await productoService.getProductosPorSucursal(idSucursal);
+      return result || []; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar la empresa:", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  };
+
+  // Obtener las categorias
+  const traerCategorias = async (
+    idSucursal: number
+  ): Promise<ICategorias[]> => {
+    try {
+      const result = await categoriaService.getAllCategoriaPorSucursal(
+        idSucursal
+      );
+      return result || []; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar la empresa:", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  };
+
+  // Traemos los datos de manera correcta
+  const fetchData = async () => {
+    try {
+      const resultEmpresa = idEmpresa ? await buscarEmpresa(idEmpresa) : null;
+
+      const resultSucursal = idSucursal
+        ? await buscarSucursal(idSucursal)
+        : null;
+
+      const resultProductos = idSucursal
+        ? await traerProductos(idSucursal)
+        : [];
+
+      const resultCategorias = idSucursal
+        ? await traerCategorias(idSucursal)
+        : [];
+
+      setEmpresa(resultEmpresa);
+      setSucursal(resultSucursal);
+      setProductos(resultProductos);
+      setProductsFiltered(resultProductos);
+      setCategorias(resultCategorias);
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+      setEmpresa(null); // En caso de error, setea empresa como null
+    } finally {
+      setIsLoading(false); // Oculta el mensaje de carga al finalizar
+    }
+  };
+
+  // Handles
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(event.target.value);
     console.log(event.target.value);
+    const result =
+    event.target.value === "All"
+        ? productos
+        : productos.filter((prod) => {
+            return prod.categoria.denominacion === event.target.value;
+          });
+    setProductsFiltered(result);
   };
 
   useEffect(() => {
-    getParams();
-  });
-
-  useEffect(() => {
-    if (sucursal !== null) {
-      if (selectedCategory === "All") {
-        getAllProducts();
-      } else {
-        const filtered: IProductos[] = [];
-        sucursal.categorias.forEach((cat) => {
-          if (cat.denominacion === selectedCategory) {
-            filtered.push(...cat.articulos);
-          }
-        });
-        setProductsFiltered(filtered);
-      }
-    }
-  });
+    fetchData();
+  }, []);
 
   if (isLoading) {
     return null; // O puedes mostrar un spinner aquí si prefieres
@@ -91,9 +147,15 @@ export const Productos = () => {
                 <option style={{ textAlign: "center" }} value="All" selected>
                   Seleccionar una categoría
                 </option>
-                <option value="Electrodomesticos">Electrodomesticos</option>
-                <option value="Smart Phones">Smart Phones</option>
-                <option value="Notebooks">Notebooks</option>
+                {categorias.length > 0
+                  ? categorias.map((cat) => {
+                      return (
+                        <option key={cat.id} value={cat.denominacion}>
+                          {cat.denominacion}
+                        </option>
+                      );
+                    })
+                  : null}
               </select>
             </div>
           </div>

@@ -25,7 +25,7 @@ export const Empresa = () => {
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
 
-  const cuit = useParams().empresaCuit;
+  const idEmpresa = Number(useParams().empresaId)
   const empresaService = new EmpresaService();
   const sucursalService = new SucursalService();
 
@@ -59,7 +59,18 @@ export const Empresa = () => {
     }
   };
 
-  //traemos las empresas
+  // Buscamos la empresa
+  const buscarEmpresa = async (idEmpresa: number): Promise<IEmpresa | null> => {
+    try {
+      const result = await empresaService.getEmpresaById(idEmpresa);
+      return result; // Devuelve los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar la empresa:", error);
+      return null ; // Devuelve un array vacío en caso de error
+    }
+  };
+
+  //traemos las sucursales
   const traerSucursales = async (idEmpresa: number): Promise<ISucursal[]> => {
     try {
       const result = await sucursalService.getSucursalesPorEmpresa(idEmpresa);
@@ -73,12 +84,8 @@ export const Empresa = () => {
   const fetchData = async () => {
     try {
       const result = await traerEmpresas(); // Trae todas las empresas y actualiza el estado
-      console.log(result);
-      const resultEmpresa = result
-        .filter((emp) => emp.cuit) // Filtra las empresas que tienen un cuit válido
-        .find((emp) => emp.cuit.toString() === cuit);
+      const resultEmpresa = idEmpresa ? await buscarEmpresa(idEmpresa) : null
 
-      console.log(resultEmpresa);
 
       const resultSucursales = resultEmpresa?.id
         ? await traerSucursales(resultEmpresa.id)
@@ -96,7 +103,7 @@ export const Empresa = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [cuit]); // Se ejecuta cada vez que cambia el cuit
+  }, [idEmpresa]); // Se ejecuta cada vez que cambia el cuit
 
   return (
     <>

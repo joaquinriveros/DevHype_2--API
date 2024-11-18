@@ -13,8 +13,8 @@ interface IListEmpresas {
 
 export const EmpresaListItem: FC<IListEmpresas> = ({ empresas, onViewEmpresClick, onEditEmpresClick}) => {
   const navigate = useNavigate();
-  const handleEmpresaNavigate = (cuit: string) => {
-    navigate(`/empresa/${cuit}`);
+  const handleEmpresaNavigate = (idEmpresa: number) => {
+    navigate(`/empresa/${idEmpresa}`);
   };
   return (
     <div className={styles.listItems__container}>
@@ -22,7 +22,7 @@ export const EmpresaListItem: FC<IListEmpresas> = ({ empresas, onViewEmpresClick
         <div
           className={styles.item__container}
           onClick={() => {
-            handleEmpresaNavigate(empresa.cuit.toString());
+            handleEmpresaNavigate(empresa.id);
           }}
         >
           <h4 className={styles.item__tittle}>{empresa.nombre}</h4>

@@ -36,6 +36,30 @@ export class SucursalService extends BackendClient<ISucursal | ICreateSucursal |
         }
     }
 
+    async getSucursalById(idSucursal: number): Promise<ISucursal | null> {
+        Swal.fire({
+            title: "Buscando sucursal...",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const response = await fetch(`${this.baseUrl}/${idSucursal}`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al cargar la empresa id:" + idSucursal);
+            }
+
+            const newData: ISucursal = await response.json();
+            return newData;
+        } finally {
+            Swal.close();
+        }
+    }
     
     async getSucursalesPorEmpresa(idEmpresa : number): Promise<ISucursal[] | null> {
         Swal.fire({

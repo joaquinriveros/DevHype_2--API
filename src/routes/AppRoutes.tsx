@@ -14,11 +14,11 @@ export const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="/empresa/:empresaCuit" element={<Empresa />} />
+        <Route path="/empresa/:empresaId" element={<Empresa />} />
       
-        <Route path="/empresa/:empresaCuit/sucursal/:sucursalId/alergenos" element={<Alergenos />} />
-        <Route path="/empresa/:empresaCuit/sucursal/:sucursalId/categorias" element={<Categorias />} />
-        <Route path="/empresa/:empresaCuit/sucursal/:sucursalId/productos" element={<Productos />} />
+        <Route path="/empresa/:empresaId/sucursal/:sucursalId/alergenos" element={<Alergenos />} />
+        <Route path="/empresa/:empresaId/sucursal/:sucursalId/categorias" element={<Categorias />} />
+        <Route path="/empresa/:empresaId/sucursal/:sucursalId/productos" element={<Productos />} />
       
         <Route path="*" element={<ErrorPage mesaje="Pagina no encontrada!" />} />
       </Routes>
