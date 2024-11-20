@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { Form, Row } from "react-bootstrap";
 import { AlergenoService } from "../../../services/AlergenosService";
-import { IImagen } from "../../../types/IImagen"; // Asegúrate de que esta importación sea correcta
+import { IImagen } from "../../../types/IImagen";
 import styles from "./FormAlergenos.module.css";
 
 interface FormAlergenoProps {
   onClose: () => void;
   onSuccess: () => void;
-  alergeno?: { id: number; denominacion: string; imagen?: IImagen | null }; // Opcional para edición
+  alergeno?: { id: number; denominacion: string; imagen?: IImagen | null };
 }
 
 export const FormAlergeno: React.FC<FormAlergenoProps> = ({
@@ -34,9 +35,8 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
     try {
       let imagenData: IImagen | null = alergeno?.imagen || null;
 
-      // Subir la imagen si se ha seleccionado
       if (imagen) {
-        const uploadResult = await alergenoService.uploadImage(imagen); // Este método debe devolver { id, url, name }
+        const uploadResult = await alergenoService.uploadImage(imagen);
         imagenData = {
           id: uploadResult.id,
           name: uploadResult.name,
@@ -46,14 +46,12 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
       }
 
       if (alergeno) {
-        // Editar el alérgeno existente
         await alergenoService.updateAlergeno(alergeno.id, {
-            denominacion,
-            imagen: imagenData,
-            id: 0
+          denominacion,
+          imagen: imagenData,
+          id: 0,
         });
       } else {
-        // Crear un nuevo alérgeno
         await alergenoService.createAlergeno({
           denominacion,
           imagen: imagenData,
@@ -71,29 +69,57 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
   };
 
   return (
-    <div className={styles.formContainer}>
-      <h3>{alergeno ? "Editar Alergeno" : "Crear Alergeno"}</h3>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label htmlFor="denominacion">Nombre</label>
-        <input
-          type="text"
-          id="denominacion"
-          value={denominacion}
-          onChange={(e) => setDenominacion(e.target.value)}
-          required
-        />
-        <label htmlFor="imagen">Imagen</label>
-        <input type="file" id="imagen" accept="image/*" onChange={handleImageChange} />
+    <div className={styles.form__container}>
+      <h3>{alergeno ? "Editar Alérgeno" : "Crear Alérgeno"}</h3>
+      <Form
+        className={styles.form}
+        noValidate
+        onSubmit={handleSubmit}
+        autoComplete="off"
+      >
+        <Row className={styles.form__input}>
+          <Form.Group className={styles.form__group} controlId="denominacionInput">
+            <Form.Label>Nombre</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              placeholder="Ingrese el nombre del alérgeno"
+              value={denominacion}
+              onChange={(e) => setDenominacion(e.target.value)}
+            />
+            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
+          </Form.Group>
+        </Row>
+        <Row className={styles.form__input}>
+          <Form.Group className={styles.form__group} controlId="imagenInput">
+            <Form.Label>Imagen</Form.Label>
+            <Form.Control
+              required
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </Form.Group>
+        </Row>
         {error && <p className={styles.error}>{error}</p>}
-        <div className={styles.buttonGroup}>
-          <button type="submit" className="add__button-green" disabled={isLoading}>
+        <div className={styles.form__buttonContainer}>
+          <button
+            className="add__button-green"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading ? "Guardando..." : alergeno ? "Guardar" : "Crear"}
           </button>
-          <button type="button" onClick={onClose} className="add__button">
+          <button
+            className="add__button"
+            type="button"
+            onClick={onClose}
+          >
             Cancelar
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };
+export default FormAlergeno;
