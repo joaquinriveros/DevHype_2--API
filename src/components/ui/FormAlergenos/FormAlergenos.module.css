@@ -1,0 +1,112 @@
+/* Contenedor principal del formulario */
+.formAlergenos__container {
+    width: min(100%, 30rem);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
+    padding: 20px;
+    color: white;
+    background-color: var(--popup-color);
+    border: 1px solid var(--borderGray-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Título del formulario */
+  .formAlergenos__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: white;
+    text-align: center;
+  }
+  
+  /* Campos de entrada */
+  .formAlergenos__input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 2px solid var(--borderGray-color);
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+  }
+  
+  .formAlergenos__input:focus {
+    border-color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Grupo para la imagen */
+  .formAlergenos__imageGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  /* Contenedor de la imagen */
+  .formAlergenos__imageContainer {
+    width: 8rem;
+    height: 8rem;
+    border: 2px dashed var(--borderGray-color);
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .formAlergenos__imageContainer:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+  }
+  
+  /* Texto dentro del contenedor de la imagen */
+  .formAlergenos__imageText {
+    font-size: 0.9rem;
+    color: white;
+    text-align: center;
+  }
+  
+  /* Botones */
+  .formAlergenos__buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+  
+  .formAlergenos__button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .formAlergenos__button--confirm {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .formAlergenos__button--confirm:hover {
+    background-color: var(--primary-color-hover);
+  }
+  
+  .formAlergenos__button--cancel {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid var(--borderGray-color);
+  }
+  
+  .formAlergenos__button--cancel:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
