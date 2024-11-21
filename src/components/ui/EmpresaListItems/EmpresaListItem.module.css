@@ -37,6 +37,12 @@
   font-size: 1.2em;
   text-transform: uppercase;
   text-align: center;
+
+  width: 90%;
+
+  white-space: nowrap; /* No permite que el texto salte de línea */
+  overflow: hidden; /* Oculta el texto que excede el ancho */
+  text-overflow: ellipsis; /* Muestra "..." al final del texto */
 }
 .item__buttonContainer {
   display: flex;
