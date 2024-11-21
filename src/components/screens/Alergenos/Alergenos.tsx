@@ -5,23 +5,24 @@ import { AlergenoService } from "../../../services/AlergenosService";
 import { EmpresaService } from "../../../services/EmpresaService"; // Servicio de empresa
 import { SucursalService } from "../../../services/SucursalService"; // Servicio de sucursal
 import { IAlergenos } from "../../../types/dtos/alergenos/IAlergenos";
-import { AccionesAlergeno } from "../../ui/AccionesAlergeno/AccionesAlergeno";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
-import { FormAlergeno } from "../../ui/FormAlergenos/FormAlergenos";
-import { AlergenoView} from "../../ui/AlergenoView/AlergenoView"
-import { AlergenosListItem } from "../../ui/AlergenosListItems/AlergenosListItems"
-import { FormEditAlergeno } from "../../ui/FormEditAlergeno/FormEditAlergeno"
+import { FormAlergeno } from "../../ui/FormAlergenos/FormAlergeno";
+import { AlergenoView } from "../../ui/AlergenoView/AlergenoView";
+import { FormEditAlergeno } from "../../ui/FormEditAlergeno/FormEditAlergeno";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
-import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 import { useParams } from "react-router-dom"; // Para obtener parámetros de la URL
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { ChargePage } from "../../ui/ChargePage/ChargePage";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 
 export const Alergenos = () => {
   const [alergenos, setAlergenos] = useState<IAlergenos[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [empresa, setEmpresa] = useState<null | IEmpresa>(null);
   const [sucursal, setSucursal] = useState<null | ISucursal>(null);
-  const [error, setError] = useState<string | null>(null);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const [selectedViewAlergeno, setSelectedViewAlergeno] =
     useState<IAlergenos | null>(null);
   const [selectedEditAlergeno, setSelectedEditAlergeno] =
@@ -32,13 +33,18 @@ export const Alergenos = () => {
   const alergenoService = new AlergenoService();
   const empresaService = new EmpresaService();
   const sucursalService = new SucursalService();
+
   const { empresaId, sucursalId } = useParams(); // Obtener IDs desde la URL
 
-  const toggleFormAlergeno = () => {
+  // Alergeno form
+  const toggleFormAlergeno = async () => {
     if (isFormAlergenoVisible) {
+      await fetchData();
     }
     setIsFormAlergenoVisible(!isFormAlergenoVisible); // Función para mostrar el formulario
   };
+
+  // Alergeno view
   const handleAlergenoClickView = (alergenoClicked: IAlergenos) => {
     setSelectedViewAlergeno(alergenoClicked);
   };
@@ -46,115 +52,148 @@ export const Alergenos = () => {
     setSelectedViewAlergeno(null);
   };
 
+  // Alergeno edit
   const handleAlergenoClickEdit = (alergenoClicked: IAlergenos) => {
     setSelectedEditAlergeno(alergenoClicked);
   };
-  const closeEditAlergeno = () => {
-    setSelectedEditAlergeno(null);
+  const closeEditAlergeno = async () => {
+    await fetchData();
+    await setSelectedEditAlergeno(null);
   };
-  // Fetch Alergenos
-  const fetchAlergenos = async () => {
+
+  // Traer Alergenos
+  const traeeAlergenos = async (): Promise<IAlergenos[]> => {
     try {
-      setError(null);
-      const data = await alergenoService.getAllAlergenos();
-      setAlergenos(data || []);
+      const result = await alergenoService.getAllAlergenos();
+      return result || [];
     } catch (error) {
-      setError("Error al cargar los alérgenos.");
+      return [];
+    }
+  };
+  // Traer Empresa
+  const traeeEmpresa = async (): Promise<IEmpresa | null> => {
+    try {
+      const result = await empresaService.getEmpresaById(Number(empresaId));
+      return result || null;
+    } catch (error) {
+      return null;
+    }
+  };
+  // Traer Empresa
+  const traerSucursal = async (): Promise<ISucursal | null> => {
+    try {
+      const result = await sucursalService.getSucursalById(Number(sucursalId));
+      return result || null;
+    } catch (error) {
+      return null;
     }
   };
 
   // Fetch Empresa y Sucursal
-  const fetchEmpresaSucursal = async () => {
+  const fetchData = async () => {
     try {
-      if (!empresaId || !sucursalId) {
-        setError("Faltan datos de empresa o sucursal.");
-        return;
-      }
+      const resultAlergenos = await traeeAlergenos();
+      const resultEmpresa = await traeeEmpresa();
+      const resultSucursal = await traerSucursal();
 
-      const [empresaData, sucursalData] = await Promise.all([
-        empresaService.getEmpresaById(Number(empresaId)),
-        sucursalService.getSucursalById(Number(sucursalId)),
-      ]);
-
-      setEmpresa(empresaData);
-      setSucursal(sucursalData);
+      setEmpresa(resultEmpresa);
+      setSucursal(resultSucursal);
+      setAlergenos(resultAlergenos);
     } catch (error) {
-      setError("Error al cargar los datos de la empresa o sucursal.");
+      console.error("Error al obtener los datos:", error);
+      setAlergenos([]);
+    } finally {
+      setIsLoading(false);
     }
+    return;
   };
 
   // Efectos
   useEffect(() => {
-    fetchAlergenos();
-    fetchEmpresaSucursal();
+    fetchData();
   }, []);
 
   // Renderizado condicional
-  if (error) {
-    return <ErrorPage mesaje={error} />;
+  if (isLoading) {
+    return <ChargePage />;
   }
-
-  if (!empresa || !sucursal) {
-    return <ErrorPage mesaje="Datos de empresa o sucursal no encontrados." />;
-  }
-
-  return (
+  return empresa && sucursal ? (
     <div className={"aside-main__container"}>
       {isFormAlergenoVisible && (
-            <div className="overlay">
-              <FormAlergeno onClose={toggleFormAlergeno} onSuccess={function (): void {
-            throw new Error("Function not implemented.");
-          } } />
-            </div>
-          )}
-          {selectedViewAlergeno && (
-            <div className="overlay">
-              <AlergenoView
-                alergeno={selectedViewAlergeno}
-                onClose={closeViewAlergeno}
-              />
-            </div>
-          )}
-          {selectedEditAlergeno && (
-            <div className="overlay">
-              <FormEditAlergeno
-                alergeno={selectedEditAlergeno}
-                onClose={closeEditAlergeno}
-              />
-            </div>
-          )}
+        <div className="overlay">
+          <FormAlergeno onClose={toggleFormAlergeno} />
+        </div>
+      )}
+      {selectedViewAlergeno && (
+        <div className="overlay">
+          <AlergenoView
+            alergeno={selectedViewAlergeno}
+            onClose={closeViewAlergeno}
+          />
+        </div>
+      )}
+      {selectedEditAlergeno && (
+        <div className="overlay">
+          <FormEditAlergeno
+            alergeno={selectedEditAlergeno}
+            onClose={closeEditAlergeno}
+          />
+        </div>
+      )}
       <AsideAdministracion empresa={empresa} sucursal={sucursal} />
       {/* Contenido principal */}
       <div className={styles.alergeno__container}>
         <div className={styles.alergeno__header}>
-          <button className="add__button" style={{marginLeft:"83%"}} onClick={() => setShowForm(true)}>
+          <h4>{`Alergenos de ${empresa.nombre}`}</h4>
+          <button className="add__button" onClick={toggleFormAlergeno}>
             AGREGAR ALÉRGENO
           </button>
-          <AlergenosListItem
+          {/* <AlergenosListItem
               alergenos={alergenos}
               onViewAlergenoClick={handleAlergenoClickView}
               onEditAlergenoClick={handleAlergenoClickEdit}
-            />
+            /> */}
         </div>
         <div className={styles.alergeno__content}>
           <div className={styles.alergeno__tableContainer}>
             <table className={styles.alergeno__table}>
               <thead>
                 <tr>
-                  <th style={{ width: "86.5%", textAlign: "center" }}>Nombre</th>
-                  <th style={{ width: "13.5%", textAlign: "center" }}>Acciones</th>
+                  <th style={{ textAlign: "center" }}>Nombre</th>
+                  <th style={{ width: "8rem", textAlign: "center" }}>
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {alergenos.map((alergeno) => (
-                  <tr key={alergeno.id}>
-                    <td style={{ textAlign: "center" }}>{alergeno.denominacion}</td>
+                {alergenos.map((aler) => (
+                  <tr key={aler.id}>
+                    <td style={{ textAlign: "center" }}>{aler.denominacion}</td>
                     <td style={{ textAlign: "center" }}>
-                      <AccionesAlergeno
-                        onEdit={() => console.log("Editar:", alergeno.id)}
-                        onView={() => console.log("Ver:", alergeno.id)}
-                        onDelete={() => console.log("Eliminar:", alergeno.id)}
-                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: ".5rem",
+                        }}
+                      >
+                        <button
+                          className="boxStyle__icon"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleAlergenoClickEdit(aler);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPen} />
+                        </button>
+                        <button className="boxStyle__icon" onClick={(event) => {
+                            event.stopPropagation();
+                            handleAlergenoClickView(aler);
+                          }}>
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -164,5 +203,7 @@ export const Alergenos = () => {
         </div>
       </div>
     </div>
+  ) : (
+    <ErrorPage mesaje="Error de Carga" />
   );
 };

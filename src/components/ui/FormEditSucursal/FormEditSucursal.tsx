@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./FormEditSucursal.module.css";
-import { useForm } from "../../../hooks/useForm";
+import { useFormOwn } from "../../../hooks/useFormOwn";
 import { Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faImage } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,6 @@ import { ILocalidad } from "../../../types/ILocalidad";
 import { PaisService } from "../../../services/PaisService";
 import { ProvinciaService } from "../../../services/ProvinciaService";
 import { LocalidadService } from "../../../services/LocalidadService";
-import { ICreateSucursal } from "../../../types/dtos/sucursal/ICreateSucursal";
 import { SucursalService } from "../../../services/SucursalService";
 import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 import { IUpdateSucursal } from "../../../types/dtos/sucursal/IUpdateSucursal";
@@ -30,7 +29,9 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
   const [validated, setValidated] = useState<boolean>(false);
   const [failTry, setFailTry] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null);
-  const [isCasaMatriz, setIsCasaMatriz] = useState<boolean>(sucursal.esCasaMatriz);
+  const [isCasaMatriz, setIsCasaMatriz] = useState<boolean>(
+    sucursal.esCasaMatriz
+  );
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -38,9 +39,15 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
   const [provincias, setProvincias] = useState<IProvincia[]>([]);
   const [localidades, setLocalidades] = useState<ILocalidad[]>([]);
 
-  const [pais, setPais] = useState<IPais | null>(sucursal.domicilio.localidad.provincia.pais);
-  const [provincia, setProvincia] = useState<IProvincia | null>(sucursal.domicilio.localidad.provincia);
-  const [localidad, setLocalidad] = useState<ILocalidad | null>(sucursal.domicilio.localidad);
+  const [pais, setPais] = useState<IPais | null>(
+    sucursal.domicilio.localidad.provincia.pais
+  );
+  const [provincia, setProvincia] = useState<IProvincia | null>(
+    sucursal.domicilio.localidad.provincia
+  );
+  const [localidad, setLocalidad] = useState<ILocalidad | null>(
+    sucursal.domicilio.localidad
+  );
 
   const sucursalService = new SucursalService();
 
@@ -48,7 +55,7 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
   const provinciaService = new ProvinciaService();
   const localidadService = new LocalidadService();
 
-  const { values, handleChanges } = useForm({
+  const { values, handleChanges } = useFormOwn({
     nombre: sucursal.nombre,
 
     hsApertura: sucursal.horarioApertura,
@@ -63,7 +70,7 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
     numeroPiso: sucursal.domicilio.piso.toString(),
     numeroDpto: sucursal.domicilio.nroDpto.toString(),
 
-    urlImg: sucursal.logo? sucursal.logo : "",
+    urlImg: sucursal.logo ? sucursal.logo : "",
   });
 
   const {
@@ -83,7 +90,7 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
     urlImg,
   } = values;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -106,7 +113,7 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
     }
 
     const updatedSucursal: IUpdateSucursal = {
-      id:sucursal.id,
+      id: sucursal.id,
       nombre: nombre,
       horarioApertura: hsApertura,
       horarioCierre: hsCierre,
@@ -125,28 +132,28 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
       eliminado: sucursal.eliminado,
       idEmpresa: empresa.id,
       logo: urlImg,
-      categorias: sucursal.categorias
+      categorias: sucursal.categorias,
     };
 
-    sucursal.nombre = nombre
-    sucursal.horarioApertura = hsApertura
-    sucursal.horarioCierre = hsCierre
-    sucursal.esCasaMatriz = isCasaMatriz
-    sucursal.latitud = Number(latitud)
-    sucursal.longitud = Number(longitud)
-    sucursal.domicilio.calle = nombreCalle
-    sucursal.domicilio.numero = Number(numeroCalle)
-    sucursal.domicilio.cp = Number(cp)
-    sucursal.domicilio.piso = Number(numeroPiso)
-    sucursal.domicilio.nroDpto = Number(numeroDpto)
-    sucursal.domicilio.localidad = localidad
-    sucursal.logo = urlImg
-    
+    sucursal.nombre = nombre;
+    sucursal.horarioApertura = hsApertura;
+    sucursal.horarioCierre = hsCierre;
+    sucursal.esCasaMatriz = isCasaMatriz;
+    sucursal.latitud = Number(latitud);
+    sucursal.longitud = Number(longitud);
+    sucursal.domicilio.calle = nombreCalle;
+    sucursal.domicilio.numero = Number(numeroCalle);
+    sucursal.domicilio.cp = Number(cp);
+    sucursal.domicilio.piso = Number(numeroPiso);
+    sucursal.domicilio.nroDpto = Number(numeroDpto);
+    sucursal.domicilio.localidad = localidad;
+    sucursal.logo = urlImg;
 
-    console.log(updatedSucursal)
-    sucursalService.updateSucursal(sucursal.id, updatedSucursal);
+    console.log(updatedSucursal);
+    await sucursalService.updateSucursal(sucursal.id, updatedSucursal);
     setValidated(true);
     onClose();
+    console.log(image);
   };
 
   // handles
@@ -264,9 +271,7 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
 
   return !isLoading ? (
     <div className={styles.form__container}>
-      <h3 className={styles.form__tittle}>
-        Editar sucursal {sucursal.nombre}
-      </h3>
+      <h3 className={styles.form__tittle}>Editar sucursal {sucursal.nombre}</h3>
       <Form
         className={styles.form}
         noValidate
@@ -382,7 +387,9 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
                       key={pa.id}
                       value={pa.id}
                       className={styles.form__inputOption}
-                      selected={pais !== null && pa.id === pais.id? true: false}
+                      selected={
+                        pais !== null && pa.id === pais.id ? true : false
+                      }
                     >
                       {pa.nombre}
                     </option>
@@ -417,7 +424,11 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
                       key={prov.id}
                       value={prov.id}
                       className={styles.form__inputOption}
-                      selected={provincia !== null && prov.id === provincia.id? true: false}
+                      selected={
+                        provincia !== null && prov.id === provincia.id
+                          ? true
+                          : false
+                      }
                     >
                       {prov.nombre.length > 20
                         ? `${prov.nombre.substring(0, 30)}...`
@@ -454,7 +465,11 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
                       key={loc.id}
                       value={loc.id}
                       className={styles.form__inputOption}
-                      selected={localidad !== null && loc.id === localidad.id? true: false}
+                      selected={
+                        localidad !== null && loc.id === localidad.id
+                          ? true
+                          : false
+                      }
                     >
                       {loc.nombre.length > 20
                         ? `${loc.nombre.substring(0, 30)}...`
@@ -621,7 +636,13 @@ export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
           <button className="add__button-green" type="submit">
             Crear
           </button>
-          <button className="add__button" onClick={onClose}>
+          <button
+            className="add__button"
+            onClick={(event) => {
+              onClose();
+              event.preventDefault();
+            }}
+          >
             Cerrar
           </button>
         </div>

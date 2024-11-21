@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { BackendClient } from "./BackendClient";
 import { IAlergenos } from "../types/dtos/alergenos/IAlergenos";
 import { ICreateAlergeno } from "../types/dtos/alergenos/ICreateAlergeno";
@@ -16,14 +15,6 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
    * @returns Datos de la imagen subida (id, url, name)
    */
   async uploadImage(imagen: File): Promise<{ id: number; url: string; name: string }> {
-    Swal.fire({
-      title: "Subiendo imagen...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
     try {
       const formData = new FormData();
       formData.append("file", imagen);
@@ -39,20 +30,13 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
 
       const uploadedImage = await response.json();
       return uploadedImage; // El servidor debe devolver { id, url, name }
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
   async getAllAlergenos(): Promise<IAlergenos[] | null> {
-    Swal.fire({
-      title: "Cargando alérgenos...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
     try {
       const response = await fetch(`${this.baseUrl}`, {
         method: "GET",
@@ -64,20 +48,13 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
 
       const newData = await response.json();
       return newData as IAlergenos[];
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 
   async getAlergenoById(idAlergeno: number): Promise<IAlergenos | null> {
-    Swal.fire({
-      title: "Buscando alérgeno...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
     try {
       const response = await fetch(`${this.baseUrl}/${idAlergeno}`, {
         method: "GET",
@@ -89,20 +66,13 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
 
       const newData = await response.json();
       return newData as IAlergenos;
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 
   async createAlergeno(alergeno: ICreateAlergeno): Promise<IAlergenos | null> {
-    Swal.fire({
-      title: "Creando alérgeno...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
     try {
       const response = await fetch(`${this.baseUrl}`, {
         method: "POST",
@@ -118,20 +88,13 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
 
       const newData = await response.json();
       return newData as IAlergenos;
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 
   async updateAlergeno(idAlergeno: number, alergeno: IUpdateAlergeno): Promise<void> {
-    Swal.fire({
-      title: "Actualizando alérgeno...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
     try {
       const response = await fetch(`${this.baseUrl}/${idAlergeno}`, {
         method: "PUT",
@@ -144,8 +107,8 @@ export class AlergenoService extends BackendClient<IAlergenos | ICreateAlergeno 
       if (!response.ok) {
         throw new Error("Error al modificar el alérgeno");
       }
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
     }
   }
 }

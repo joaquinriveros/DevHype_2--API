@@ -1,36 +1,28 @@
 import { useState } from "react";
-import { useForm } from "../../../hooks/useForm";
+import { useFormOwn } from "../../../hooks/useFormOwn";
 import { Form, Row } from "react-bootstrap";
 import { AlergenoService } from "../../../services/AlergenosService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
-import { IImagen } from "../../../types/IImagen";
-import styles from "./FormAlergenos.module.css";
+import styles from "./FormAlergeno.module.css";
+import { ICreateAlergeno } from "../../../types/dtos/alergenos/ICreateAlergeno";
 
 interface FormAlergenoProps {
   onClose: () => void;
-  onSuccess: () => void;
-  alergeno?: { id: number; denominacion: string; imagen?: IImagen | null };
 }
 
-export const FormAlergeno: React.FC<FormAlergenoProps> = ({
-  onClose,
-  onSuccess,
-  alergeno,
-}) => {
-  const [denominacion] = useState(alergeno?.denominacion || "");
-  
+export const FormAlergeno: React.FC<FormAlergenoProps> = ({ onClose }) => {
   const [imagen, setImagen] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [failTry, setFailTry] = useState(false);
-  const { values, handleChanges } = useForm({
-    name: "",
+
+  const alergenoService = new AlergenoService();
+
+  const { values, handleChanges } = useFormOwn({
+    denominacion: "",
     logo: "",
   });
 
-
-  const alergenoService = new AlergenoService();
+  const { denominacion, logo } = values;
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -44,52 +36,27 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!denominacion.trim()) {
+    if (denominacion === "") {
       setFailTry(true); // Activa el estado de error si el campo está vacío.
       return;
     }
-    setFailTry(false); // Resetea el estado si pasa la validación.
-    // Lógica restante...
 
+    const newAlergeno: ICreateAlergeno = {
+      denominacion: denominacion,
+      imagen: { name: denominacion, url: logo },
+    };
     try {
-      let imagenData: IImagen | null = alergeno?.imagen || null;
-
-      if (imagen) {
-        const uploadResult = await alergenoService.uploadImage(imagen);
-        imagenData = {
-          id: uploadResult.id,
-          name: uploadResult.name,
-          url: uploadResult.url,
-          eliminado: false,
-        };
-      }
-
-      if (alergeno) {
-        await alergenoService.updateAlergeno(alergeno.id, {
-          denominacion,
-          imagen: imagenData,
-          id: 0,
-        });
-      } else {
-        await alergenoService.createAlergeno({
-          denominacion,
-          imagen: imagenData,
-        });
-      }
-
-      onSuccess();
+      await alergenoService.createAlergeno(newAlergeno);
       onClose();
-    } catch (err) {
-      setError("Error al guardar el alérgeno. Por favor, inténtalo nuevamente.");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      setFailTry(true);
     }
   };
 
   return (
     <div className={styles.form__container}>
-      <h3>{alergeno ? "Editar Alérgeno" : "Crear Alérgeno"}</h3>
+      <h3>Crear Alérgeno</h3>
       <Form
         className={styles.form}
         noValidate
@@ -98,9 +65,7 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
       >
         <Row className={styles.form__input}>
           <Form.Group className={styles.form__group} controlId="nameInput">
-            <Form.Label>
-              Nombre
-            </Form.Label>
+            <Form.Label>Nombre</Form.Label>
             <Form.Control
               className={`${
                 failTry && denominacion === ""
@@ -109,11 +74,11 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
               }`}
               required
               type="text"
-              placeholder="Ingrese el nombre del alérgeno"
+              placeholder="Nombre del alérgeno"
               value={denominacion}
+              name="denominacion"
               onChange={handleChanges}
             />
-            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
@@ -133,6 +98,7 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
             <div className={styles.form__imgView}>
               {values.logo !== "" ? (
                 <img
+                  src={values.logo}
                   alt="Miniatura"
                   style={{
                     width: "100%",
@@ -147,20 +113,11 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
             </div>
           </Form.Group>
         </Row>
-        {error && <p className={styles.error}>{error}</p>}
         <div className={styles.form__buttonContainer}>
-          <button
-            className="add__button-green"
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? "Guardando..." : alergeno ? "Guardar" : "Crear"}
+          <button className="add__button-green" type="submit">
+            Crear
           </button>
-          <button
-            className="add__button"
-            type="button"
-            onClick={onClose}
-          >
+          <button className="add__button" type="button" onClick={onClose}>
             Cancelar
           </button>
         </div>
