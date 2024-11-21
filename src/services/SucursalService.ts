@@ -86,7 +86,9 @@ export class SucursalService extends BackendClient<ISucursal | ICreateSucursal |
 
     async updateSucursal(idSucursal: number, sucursal: ICreateSucursal): Promise<void> {
         try {
+
             const response = await fetch(`${this.baseUrl}/update/${idSucursal}`, {
+
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(sucursal),

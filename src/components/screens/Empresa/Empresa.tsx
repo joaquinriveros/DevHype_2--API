@@ -16,6 +16,7 @@ import { FormSucursal } from "../../ui/FormSucursal/FormSucursal";
 import { FormEditSucursal } from "../../ui/FormEditSucursal/FormEditSucursal";
 import { ChargePage } from "../../ui/ChargePage/ChargePage";
 
+
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
@@ -53,8 +54,6 @@ export const Empresa = () => {
     if(isFormSucursalVisible){
       await fetchData()
     }
-    setIsFormSucursalVisible(!isFormSucursalVisible); // Función para mostrar el formulario
-  };
 
   // Empresa view
   const handleEmpresClickView = (empresaClicked: IEmpresa) => {
