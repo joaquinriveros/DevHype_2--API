@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./FormSucursal.module.css";
+import styles from "./FormEditSucursal.module.css";
 import { useForm } from "../../../hooks/useForm";
 import { Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,20 +13,24 @@ import { ProvinciaService } from "../../../services/ProvinciaService";
 import { LocalidadService } from "../../../services/LocalidadService";
 import { ICreateSucursal } from "../../../types/dtos/sucursal/ICreateSucursal";
 import { SucursalService } from "../../../services/SucursalService";
+import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
+import { IUpdateSucursal } from "../../../types/dtos/sucursal/IUpdateSucursal";
 
-interface FormSucursalProps {
+interface FormEditSucursalProps {
   onClose: () => void; // Prop para cerrar el formulario
   empresa: IEmpresa;
+  sucursal: ISucursal;
 }
 
-export const FormSucursal: React.FC<FormSucursalProps> = ({
+export const FormEditSucursal: React.FC<FormEditSucursalProps> = ({
   onClose,
   empresa,
+  sucursal,
 }) => {
   const [validated, setValidated] = useState<boolean>(false);
   const [failTry, setFailTry] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null);
-  const [isCasaMatriz, setIsCasaMatriz] = useState<boolean>(false);
+  const [isCasaMatriz, setIsCasaMatriz] = useState<boolean>(sucursal.esCasaMatriz);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -34,9 +38,9 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
   const [provincias, setProvincias] = useState<IProvincia[]>([]);
   const [localidades, setLocalidades] = useState<ILocalidad[]>([]);
 
-  const [pais, setPais] = useState<IPais | null>(null);
-  const [provincia, setProvincia] = useState<IProvincia | null>(null);
-  const [localidad, setLocalidad] = useState<ILocalidad | null>(null);
+  const [pais, setPais] = useState<IPais | null>(sucursal.domicilio.localidad.provincia.pais);
+  const [provincia, setProvincia] = useState<IProvincia | null>(sucursal.domicilio.localidad.provincia);
+  const [localidad, setLocalidad] = useState<ILocalidad | null>(sucursal.domicilio.localidad);
 
   const sucursalService = new SucursalService();
 
@@ -45,21 +49,21 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
   const localidadService = new LocalidadService();
 
   const { values, handleChanges } = useForm({
-    nombre: "",
+    nombre: sucursal.nombre,
 
-    hsApertura: "00:00",
-    hsCierre: "00:00",
+    hsApertura: sucursal.horarioApertura,
+    hsCierre: sucursal.horarioCierre,
 
-    latitud: "",
-    longitud: "",
+    latitud: sucursal.latitud.toString(),
+    longitud: sucursal.longitud.toString(),
 
-    nombreCalle: "",
-    numeroCalle: "",
-    cp: "",
-    numeroPiso: "",
-    numeroDpto: "",
+    nombreCalle: sucursal.domicilio.calle,
+    numeroCalle: sucursal.domicilio.numero.toString(),
+    cp: sucursal.domicilio.cp.toString(),
+    numeroPiso: sucursal.domicilio.piso.toString(),
+    numeroDpto: sucursal.domicilio.nroDpto.toString(),
 
-    urlImg: "",
+    urlImg: sucursal.logo? sucursal.logo : "",
   });
 
   const {
@@ -82,40 +86,6 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(
-      "nombre:",
-      nombre,
-      "hsApertura:",
-      hsApertura,
-      "hsCierre:",
-      hsCierre,
-
-      "pais:",
-      pais,
-      "provincia:",
-      provincia,
-      "localidad:",
-      localidad,
-
-      "latitud:",
-      latitud,
-      "longitud:",
-      longitud,
-
-      "nombre calle:",
-      nombreCalle,
-      "numero calle:",
-      numeroCalle,
-      "codigo postal:",
-      cp,
-      "numero de piso:",
-      numeroPiso,
-      "numero de dpto:",
-      numeroDpto,
-
-      urlImg
-    );
-
     if (
       !nombre ||
       !hsApertura ||
@@ -135,7 +105,8 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
       return;
     }
 
-    const newSucursal: ICreateSucursal = {
+    const updatedSucursal: IUpdateSucursal = {
+      id:sucursal.id,
       nombre: nombre,
       horarioApertura: hsApertura,
       horarioCierre: hsCierre,
@@ -143,6 +114,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
       latitud: Number(latitud),
       longitud: Number(longitud),
       domicilio: {
+        id: sucursal.domicilio.id,
         calle: nombreCalle,
         numero: Number(numeroCalle),
         cp: Number(cp),
@@ -150,11 +122,29 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
         nroDpto: Number(numeroDpto),
         idLocalidad: localidad.id,
       },
+      eliminado: sucursal.eliminado,
       idEmpresa: empresa.id,
       logo: urlImg,
+      categorias: sucursal.categorias
     };
 
-    sucursalService.createSucursal(newSucursal);
+    sucursal.nombre = nombre
+    sucursal.horarioApertura = hsApertura
+    sucursal.horarioCierre = hsCierre
+    sucursal.esCasaMatriz = isCasaMatriz
+    sucursal.latitud = Number(latitud)
+    sucursal.longitud = Number(longitud)
+    sucursal.domicilio.calle = nombreCalle
+    sucursal.domicilio.numero = Number(numeroCalle)
+    sucursal.domicilio.cp = Number(cp)
+    sucursal.domicilio.piso = Number(numeroPiso)
+    sucursal.domicilio.nroDpto = Number(numeroDpto)
+    sucursal.domicilio.localidad = localidad
+    sucursal.logo = urlImg
+    
+
+    console.log(updatedSucursal)
+    sucursalService.updateSucursal(sucursal.id, updatedSucursal);
     setValidated(true);
     onClose();
   };
@@ -275,7 +265,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
   return !isLoading ? (
     <div className={styles.form__container}>
       <h3 className={styles.form__tittle}>
-        Crear sucursal de {empresa.nombre}
+        Editar sucursal {sucursal.nombre}
       </h3>
       <Form
         className={styles.form}
@@ -349,9 +339,20 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
                   gap: ".5rem",
                 }}
               >
-                <div className={styles.form__checkBox} onClick={()=>setIsCasaMatriz(!isCasaMatriz)}>
-                <FontAwesomeIcon icon={faCheck} color="var(--gray-color)" size="sm" style={isCasaMatriz? {transition: 'all .3s ease' ,opacity: '100%'} :{transition: 'all .3s ease' ,opacity: '0%'}}/>
-                  
+                <div
+                  className={styles.form__checkBox}
+                  onClick={() => setIsCasaMatriz(!isCasaMatriz)}
+                >
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    color="var(--gray-color)"
+                    size="sm"
+                    style={
+                      isCasaMatriz
+                        ? { transition: "all .3s ease", opacity: "100%" }
+                        : { transition: "all .3s ease", opacity: "0%" }
+                    }
+                  />
                 </div>
                 <p className={styles.form__cazaMatrizTxt}>Casa matriz</p>
               </Form.Group>
@@ -381,6 +382,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
                       key={pa.id}
                       value={pa.id}
                       className={styles.form__inputOption}
+                      selected={pais !== null && pa.id === pais.id? true: false}
                     >
                       {pa.nombre}
                     </option>
@@ -415,6 +417,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
                       key={prov.id}
                       value={prov.id}
                       className={styles.form__inputOption}
+                      selected={provincia !== null && prov.id === provincia.id? true: false}
                     >
                       {prov.nombre.length > 20
                         ? `${prov.nombre.substring(0, 30)}...`
@@ -451,6 +454,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
                       key={loc.id}
                       value={loc.id}
                       className={styles.form__inputOption}
+                      selected={localidad !== null && loc.id === localidad.id? true: false}
                     >
                       {loc.nombre.length > 20
                         ? `${loc.nombre.substring(0, 30)}...`

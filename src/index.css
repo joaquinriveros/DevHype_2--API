@@ -98,7 +98,8 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 0.5rem;
 
   /* gradiant */
-  background: rgb(255, 255, 255);
+
+  background-color: #111827 !important;
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
@@ -109,12 +110,17 @@ input[type="number"]::-webkit-outer-spin-button {
   color: var(--gray-color);
   text-decoration: none;
   text-align: center;
-  transition: all 0.2s ease;
+  
+  transition: all 0.5s;
 }
 .gradiantStyle__button option {
   background-color: var(--primaryBlue-color); /* Fondo de cada opción */
   color: var(--gray-color); /* Color del texto */
   padding: 10px; /* Espacio interno (en algunos navegadores no se aplica) */
+
+  white-space: nowrap !important; /* No permite que el texto salte de línea */
+  overflow: hidden !important; /* Oculta el texto que excede el ancho */
+  text-overflow: ellipsis !important; /* Muestra "..." al final del texto */
 }
 .boxStyle__icon {
   border: 2px solid var(--white-color);
@@ -127,7 +133,7 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: small;
   color: var(--gray-color);
 }
-.boxStyle__icon:hover{
+.boxStyle__icon:hover {
   transform: scale(1.15);
 }
 .boxStyle__iconRed {
@@ -167,6 +173,37 @@ input[type="number"]::-webkit-outer-spin-button {
   border-color: var(--gray-color) !important;
   box-shadow: none !important;
 }
+/* inpust type time*/
+.form__inputText[type="time"] {
+  width: 100%;
+  padding: 0.2rem 1rem !important;
+  border: 2px solid var(--borderGray-color) !important;
+  color: var(--gray-color) !important;
+
+  border-radius: 0.5rem !important;
+
+  /* gradiant */
+  border: 2px solid var(--borderGray-color);
+  border-radius: 0.5rem;
+
+  /* Gradiant background */
+  background: none !important;
+  background-color: #111827 !important;
+}
+.form__inputText[type="time"]::placeholder {
+  color: var(--borderGray-color) !important;
+}
+.form__inputText[type="time"]:focus {
+  border-color: var(--gray-color) !important;
+  box-shadow: none !important;
+}
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 2px;
+  opacity: 0.9;
+  filter: invert(0.9);
+}
 /* Fail */
 .form__inputText-fail {
   width: 100%;
@@ -185,7 +222,7 @@ input[type="number"]::-webkit-outer-spin-button {
     rgba(255, 255, 255, 0) 100%
   ) !important;
 
-  transition: all .5s ;
+  transition: all 0.5s;
 }
 .form__inputText-fail::placeholder {
   color: var(--redLite-color) !important;
@@ -208,5 +245,3 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
   z-index: 1000; /* Asegura que el overlay esté por encima de otros elementos */
 }
-
-
