@@ -1,0 +1,206 @@
+.form__container {
+  width: 50rem;
+  min-height: 30rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+
+  color: white;
+  background-color: var(--pupUp-color);
+  border: 1px solid var(--borderGray-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  gap: 2rem;
+}
+.form__gridItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+}
+/* ------------------- */
+.form__tittle {
+  margin-bottom: 3rem;
+}
+.form__input {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+/* input time */
+.form__labelHora {
+  font-size: small;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: var(--gray-color);
+}
+/* input disable */
+.form__inputDisable {
+  opacity: 50% !important;
+}
+/* Check */
+.form__checkBox {
+  width: 25px;
+  height: 25px;
+  border: 2px solid var(--borderGray-color);
+  border-radius: 4px; /* Hace el checkbox con bordes redondeados */
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease;
+}
+
+.form__checkBoxTxt {
+  font-size: small;
+  text-align: center;
+  margin-bottom: 0px;
+  color: var(--gray-color);
+}
+/* Img group */
+.form__groupImg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form__inputImgContainer {
+  width: 100%;
+  margin: auto;
+  padding: 0.2rem 1rem;
+  border: 2px solid var(--borderGray-color);
+  border-radius: 0.5rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* gradiant */
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: all 0.2s;
+}
+.form__inputImgContainer:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+.form__selectImg {
+  margin: 0.2rem !important;
+}
+.form__selectImg:hover {
+  cursor: pointer !important;
+}
+.form__imgView {
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border: 2px solid var(--borderGray-color);
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 8rem;
+  border-radius: 1rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form__buttonContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 2rem;
+}
+/* error mesaje */
+.login__errorMesaje {
+  font-size: 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.5s ease;
+}
+.login__errorMesajeVisivility {
+  font-size: small;
+  color: red;
+  text-align: center;
+  margin: 10px;
+
+  transition: all 0.5s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+/* popUp */
+.form__popUpSelect {
+  width: 30rem;
+  min-height: 20rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  color: white;
+  background-color: var(--pupUp-color);
+  border: 1px solid var(--borderGray-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden; /* Para manejar el scroll del hijo */
+}
+.form__popUpAlergenosContainer {
+  overflow-y: auto; /* Activa el scroll vertical */
+  max-height: 25rem;
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 1rem;
+  
+  background-color: #111827 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.089) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+
+  -webkit-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.75);
+
+  margin: 1rem;
+}
+.form__popUpAlergenosCheck{
+  width: 20px;
+  height: 20px; 
+  
+}
+.form__containerCheck{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+}

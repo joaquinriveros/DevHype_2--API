@@ -1,6 +1,5 @@
 import { AsideAdministracion } from "../../ui/AsideAdministracion/AsideAdministracion";
 import styles from "./Prosuctos.module.css";
-import { AccionesProducto } from "../../ui/AccionesProducto/AccionesProducto";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
@@ -12,6 +11,16 @@ import { SucursalService } from "../../../services/SucursalService";
 import { ProductoService } from "../../../services/ProductoService";
 import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
 import { CategoriaService } from "../../../services/CategoriaService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faEye,
+  faPen,
+  faTrashCan,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
+import { ChargePage } from "../../ui/ChargePage/ChargePage";
+import { FormProducto } from "../../ui/FormProducto/FormProducto";
 
 export const Productos = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -28,6 +37,38 @@ export const Productos = () => {
   const categoriaService = new CategoriaService();
   const idEmpresa = Number(useParams().empresaId);
   const idSucursal = Number(useParams().sucursalId);
+
+  const [selectedViewProducto, setSelectedViewProducto] =
+    useState<IProductos | null>(null);
+  const [selectedEditProducto, setSelectedEditProducto] =
+    useState<IProductos | null>(null);
+  const [isFormProductoVisible, setIsFormProductoVisible] =
+    useState<boolean>(false);
+
+// Alergeno form
+const toggleFormProducto = async () => {
+  if (isFormProductoVisible) {
+    await fetchData();
+  }
+  setIsFormProductoVisible(!isFormProductoVisible); // Función para mostrar el formulario
+};
+
+// Producto view
+const handleProductoClickView = (productoClicked: IProductos) => {
+  setSelectedViewProducto(productoClicked);
+};
+const closeViewProducto = () => {
+  setSelectedViewProducto(null);
+};
+
+// Producto edit
+const handleProductoClickEdit = (productoClicked: IProductos) => {
+  setSelectedEditProducto(productoClicked);
+};
+const closeEditProducto = async () => {
+  await fetchData();
+  await setSelectedEditProducto(null);
+};
 
   // Buscamos la empresa
   const buscarEmpresa = async (idEmpresa: number): Promise<IEmpresa | null> => {
@@ -114,7 +155,7 @@ export const Productos = () => {
     setSelectedCategory(event.target.value);
     console.log(event.target.value);
     const result =
-    event.target.value === "All"
+      event.target.value === "All"
         ? productos
         : productos.filter((prod) => {
             return prod.categoria.denominacion === event.target.value;
@@ -127,10 +168,33 @@ export const Productos = () => {
   }, []);
 
   if (isLoading) {
-    return null; // O puedes mostrar un spinner aquí si prefieres
+    return <ChargePage />;
   }
   return empresa !== null && sucursal !== null ? (
     <div className={"aside-main__container"}>
+      {isFormProductoVisible && (
+        <div className="overlay">
+          <FormProducto categorias={categorias} onClose={toggleFormProducto}  />
+        </div>
+      )}
+      {selectedViewProducto && (
+        <div className="overlay">
+          {/* <ProductoView
+            Producto={selectedViewProducto}
+            onClose={closeViewProducto}
+          /> */}
+        </div>
+      )}
+      {selectedEditProducto && (
+        <div className="overlay">
+          {/* <FormEditProducto
+            categorias={categorias}
+            producto={selectedEditProducto}
+            onClose={closeEditProducto}
+          /> */}
+        </div>
+      )}
+
       <AsideAdministracion empresa={empresa} sucursal={sucursal} />
 
       <div className={styles.producto__body}>
@@ -151,7 +215,9 @@ export const Productos = () => {
                   ? categorias.map((cat) => {
                       return (
                         <option key={cat.id} value={cat.denominacion}>
-                          {cat.denominacion}
+                          {cat.denominacion.length > 20
+                            ? `${cat.denominacion.substring(0, 30)}...`
+                            : cat.denominacion}
                         </option>
                       );
                     })
@@ -160,7 +226,7 @@ export const Productos = () => {
             </div>
           </div>
           <div>
-            <button className="add__button">Agregar Producto</button>
+            <button className="add__button" onClick={toggleFormProducto}>Agregar Producto</button>
           </div>
         </div>
 
@@ -185,9 +251,50 @@ export const Productos = () => {
                     <td>${prod.precioVenta}</td>
                     <td>{prod.descripcion}</td>
                     <td>{prod.categoria.denominacion}</td>
-                    <td>{prod.habilitado}</td>
                     <td>
-                      <AccionesProducto />
+                      {prod.habilitado ? (
+                        <div
+                          className="boxStyle__iconGreen"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faCheck} size="xl" />
+                        </div>
+                      ) : (
+                        <div
+                          className="boxStyle__iconRed"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faX} size="xl" />
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: ".5rem",
+                        }}
+                      >
+                        <button className="boxStyle__icon">
+                          <FontAwesomeIcon icon={faPen} />
+                        </button>
+                        <button className="boxStyle__icon">
+                          <FontAwesomeIcon icon={faEye} />
+                        </button>
+                        <button className="boxStyle__iconRed">
+                          <FontAwesomeIcon icon={faTrashCan} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

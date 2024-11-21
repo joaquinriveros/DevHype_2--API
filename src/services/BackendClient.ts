@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { AbstractBackendClient } from "./AbstractBackendClient";
 
 export abstract class BackendClient<T> extends AbstractBackendClient<T> {
@@ -9,7 +8,7 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
   async getAll(): Promise<T[]> {
     const response = await fetch(`${this.baseUrl}`);
     if (!response.ok) {
-      throw new Error(`Error`);
+      throw new Error(`Error al obtener todos los elementos`);
     }
     const data = await response.json();
     return data as T[];
@@ -18,20 +17,13 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
   async getById(id: string): Promise<T | null> {
     const response = await fetch(`${this.baseUrl}/${id}`);
     if (!response.ok) {
-      throw new Error(`Error`);
+      throw new Error(`Error al obtener el elemento con ID ${id}`);
     }
     const data = await response.json();
     return data as T;
   }
 
   async post(data: T): Promise<T> {
-    Swal.fire({
-      title: "Enviando datos...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
     try {
       const response = await fetch(`${this.baseUrl}`, {
         method: "POST",
@@ -41,23 +33,17 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error(`Error`);
+        throw new Error(`Error al enviar los datos`);
       }
       const newData = await response.json();
       return newData as T;
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
   async put(id: number, data: T): Promise<T> {
-    Swal.fire({
-      title: "Editando datos...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: "PUT",
@@ -67,33 +53,27 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error(`Error`);
+        throw new Error(`Error al actualizar el elemento con ID ${id}`);
       }
       const newData = await response.json();
       return newData as T;
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
-  // Método para eliminar un elemento por su ID
   async delete(id: number): Promise<void> {
-    Swal.fire({
-      title: "Eliminando...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error(`Error`);
+        throw new Error(`Error al eliminar el elemento con ID ${id}`);
       }
-    } finally {
-      Swal.close();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 }

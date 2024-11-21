@@ -1,36 +1,48 @@
 import { useState } from "react";
 import { Form, Row } from "react-bootstrap";
-import { useForm } from "../../../hooks/useForm";
+import { useFormOwn } from "../../../hooks/useFormOwn";
 import styles from "./FormEmprese.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { ICreateEmpresaDto } from "../../../types/dtos/empresa/ICreateEmpresaDto";
 import { EmpresaService } from "../../../services/EmpresaService";
+import { ImageService } from "../../../services/ImageService";
 
 interface FormEmpresaProps {
   onClose: () => void; // Prop para cerrar el formulario
 }
 
 export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
-  const [validated, setValidated] = useState<boolean>(false);
   const [failTry, setFailTry] = useState<boolean>(false);
-  const [image, setImage] = useState<File | null>(null);
+  const [urlResponce, setUrlResponce] = useState<string | null>(null)
+
 
   const empresaService = new EmpresaService();
+  const imageService = new ImageService("images");
 
-  const { values, handleChanges } = useForm({
+  const { values, handleChanges } = useFormOwn({
     name: "",
     razonSocial: "",
     cuit: "",
-    logo: "",
   });
 
-  const { name, razonSocial, cuit, logo } = values;
+  const { name, razonSocial, cuit } = values;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // handle imagen
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Obtiene el primer archivo
+    if(file ){
+      const formData = new FormData();
+      formData.append("uploads", file); // Agregamos el archivo al FormData para enviarlo
+
+      const data = await imageService.uploadImage(formData);
+      console.log(data)
+      setUrlResponce(data)
+    }
+  };
+
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Formulario enviado con:", { name, razonSocial, cuit, logo }); // visualizacion del estado
 
     if (!name.trim() || !razonSocial.trim() || !cuit) {
       setFailTry(true);
@@ -41,26 +53,16 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
       nombre: name,
       razonSocial: razonSocial,
       cuit: Number(cuit),
-      logo: logo === "" ? null : logo,
+      logo: urlResponce || null, // Aseguramos que el logo sea nulo si no hay imagen cargada
     };
 
     try {
-      empresaService.createEmpresa(newEmpresa);
-      setValidated(true);
+      await empresaService.createEmpresa(newEmpresa);
       onClose();
     } catch (error) {
       console.error("Error al crear la empresa:", error);
       setFailTry(true);
     }
-  };
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]; // Obtiene el primer archivo
-    if (file) {
-      setImage(file); // Actualiza el estado con el archivo seleccionado
-      const url = URL.createObjectURL(file);
-      values.logo = url;
-    }
-    console.log(image);
   };
 
   return (
@@ -69,8 +71,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
       <Form
         className={styles.form}
         noValidate
-        validated={validated}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitForm}
         autoComplete="off"
       >
         <Row className={styles.form__input}>
@@ -84,12 +85,11 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               }`}
               required
               type="text"
-              placeholder="nombre"
+              placeholder="Nombre"
               onChange={handleChanges}
               name="name"
               value={name}
             />
-            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
@@ -111,7 +111,6 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               name="razonSocial"
               value={razonSocial}
             />
-            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
@@ -130,7 +129,6 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               name="cuit"
               value={cuit}
             />
-            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
@@ -143,14 +141,14 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
                 style={{ display: "none" }}
                 required
                 type="file"
-                accept="image/*" // Acepta solo imágenes
-                onChange={handleImageChange} // Maneja el cambio en el input
+                accept="image/*"
+                onChange={handleImageChange} // Llama al hook useImage
               />
             </div>
             <div className={styles.form__imgView}>
-              {values.logo !== "" ? (
+              {urlResponce ? (
                 <img
-                  src={logo}
+                  src={urlResponce}
                   alt="Miniatura"
                   style={{
                     width: "100%",
@@ -170,7 +168,13 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
           <button className="add__button-green" type="submit">
             Crear
           </button>
-          <button className="add__button" onClick={onClose}>
+          <button
+            className="add__button"
+            onClick={(event) => {
+              onClose();
+              event.preventDefault();
+            }}
+          >
             Cerrar
           </button>
         </div>

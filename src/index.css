@@ -93,6 +93,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .gradiantStyle__button {
   width: 100%;
+  min-height: 2rem;
   padding: 0.2rem 1rem;
   border: 2px solid var(--borderGray-color);
   border-radius: 0.5rem;
@@ -113,7 +114,7 @@ input[type="number"]::-webkit-outer-spin-button {
   
   transition: all 0.5s;
 }
-.gradiantStyle__button option {
+.gradiantStyle__button option{
   background-color: var(--primaryBlue-color); /* Fondo de cada opción */
   color: var(--gray-color); /* Color del texto */
   padding: 10px; /* Espacio interno (en algunos navegadores no se aplica) */
@@ -147,6 +148,18 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: small;
   color: var(--red-color);
   background-color: rgba(255, 0, 0, 0.087);
+}
+.boxStyle__iconGreen {
+  border: 2px solid var(--green-color);
+  height: 2rem;
+  width: 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  background: none;
+  font-size: small;
+  color: var(--green-color);
+  background-color: rgba(51, 255, 0, 0.087);
 }
 /* inpust */
 .form__inputText {
