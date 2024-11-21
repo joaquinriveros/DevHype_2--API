@@ -16,7 +16,6 @@ import { FormSucursal } from "../../ui/FormSucursal/FormSucursal";
 import { FormEditSucursal } from "../../ui/FormEditSucursal/FormEditSucursal";
 import { ChargePage } from "../../ui/ChargePage/ChargePage";
 
-
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
   const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
@@ -45,15 +44,17 @@ export const Empresa = () => {
   const sucursalService = new SucursalService();
 
   const toggleFormEmpresa = async () => {
-    if(isFormEmpresaVisible){
-      await fetchData()
+    if (isFormEmpresaVisible) {
+      await fetchData();
     }
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
   };
   const toggleFormSucursal = async () => {
-    if(isFormSucursalVisible){
-      await fetchData()
+    if (isFormSucursalVisible) {
+      await fetchData();
     }
+    setIsFormSucursalVisible(!isFormSucursalVisible);
+  };
 
   // Empresa view
   const handleEmpresClickView = (empresaClicked: IEmpresa) => {
@@ -79,7 +80,7 @@ export const Empresa = () => {
     setSelectedViewSucursal(null);
   };
 
-  // Sucursal edit 
+  // Sucursal edit
   const handleSucursalClickEdit = (sucursalClicked: ISucursal) => {
     setSelectedEditSucursal(sucursalClicked);
   };
@@ -141,11 +142,13 @@ export const Empresa = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [idEmpresa]); // Se ejecuta cada vez que cambia el cuit
+  }, []); // Se ejecuta cada vez que cambia el cuit
 
   return (
     <>
-      {isLoading ? <ChargePage/> : empresa ? ( // Mostrar un mensaje de carga mientras isLoading es true
+      {isLoading ? (
+        <ChargePage />
+      ) : empresa ? ( // Mostrar un mensaje de carga mientras isLoading es true
         <div className={"aside-main__container"}>
           {isFormEmpresaVisible && (
             <div className="overlay">
