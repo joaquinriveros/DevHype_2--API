@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useForm } from "../../../hooks/useForm";
 import { Form, Row } from "react-bootstrap";
 import { AlergenoService } from "../../../services/AlergenosService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { IImagen } from "../../../types/IImagen";
 import styles from "./FormAlergenos.module.css";
 
@@ -15,22 +18,38 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
   onSuccess,
   alergeno,
 }) => {
-  const [denominacion, setDenominacion] = useState(alergeno?.denominacion || "");
+  const [denominacion] = useState(alergeno?.denominacion || "");
+  
   const [imagen, setImagen] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failTry, setFailTry] = useState(false);
+  const { values, handleChanges } = useForm({
+    name: "",
+    logo: "",
+  });
+
 
   const alergenoService = new AlergenoService();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) setImagen(file);
+    if (file) {
+      setImagen(file); // Actualiza el estado con el archivo seleccionado
+      const url = URL.createObjectURL(file);
+      values.logo = url;
+    }
+    console.log(imagen);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    if (!denominacion.trim()) {
+      setFailTry(true); // Activa el estado de error si el campo está vacío.
+      return;
+    }
+    setFailTry(false); // Resetea el estado si pasa la validación.
+    // Lógica restante...
 
     try {
       let imagenData: IImagen | null = alergeno?.imagen || null;
@@ -78,27 +97,54 @@ export const FormAlergeno: React.FC<FormAlergenoProps> = ({
         autoComplete="off"
       >
         <Row className={styles.form__input}>
-          <Form.Group className={styles.form__group} controlId="denominacionInput">
-            <Form.Label>Nombre</Form.Label>
+          <Form.Group className={styles.form__group} controlId="nameInput">
+            <Form.Label>
+              Nombre
+            </Form.Label>
             <Form.Control
+              className={`${
+                failTry && denominacion === ""
+                  ? "form__inputText-fail"
+                  : "form__inputText"
+              }`}
               required
               type="text"
               placeholder="Ingrese el nombre del alérgeno"
               value={denominacion}
-              onChange={(e) => setDenominacion(e.target.value)}
+              onChange={handleChanges}
             />
             <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
-          <Form.Group className={styles.form__group} controlId="imagenInput">
-            <Form.Label>Imagen</Form.Label>
-            <Form.Control
-              required
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+          <Form.Group className={styles.form__groupImg} controlId="imageImput">
+            <div className={styles.form__inputImgContainer}>
+              <Form.Label className={styles.form__selectImg}>
+                Seleccionar Imagen
+              </Form.Label>
+              <Form.Control
+                style={{ display: "none" }}
+                required
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+            <div className={styles.form__imgView}>
+              {values.logo !== "" ? (
+                <img
+                  alt="Miniatura"
+                  style={{
+                    width: "100%",
+                    height: "8rem",
+                    objectFit: "cover",
+                    borderRadius: "1rem",
+                  }}
+                />
+              ) : (
+                <FontAwesomeIcon icon={faImage} style={{ fontSize: "4rem" }} />
+              )}
+            </div>
           </Form.Group>
         </Row>
         {error && <p className={styles.error}>{error}</p>}
