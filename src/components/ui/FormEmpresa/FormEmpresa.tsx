@@ -97,7 +97,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
             className={styles.form__group}
             controlId="razonSocialImput"
           >
-            <Form.Label>Descripción</Form.Label>
+            <Form.Label>Razón Social</Form.Label>
             <Form.Control
               className={`${
                 failTry && razonSocial === ""
@@ -106,7 +106,7 @@ export const FormEmpresa: React.FC<FormEmpresaProps> = ({ onClose }) => {
               }`}
               required
               type="text"
-              placeholder="Razon Social"
+              placeholder="Razón Social"
               onChange={handleChanges}
               name="razonSocial"
               value={razonSocial}

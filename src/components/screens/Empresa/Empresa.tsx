@@ -11,6 +11,9 @@ import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { EmpresaService } from "../../../services/EmpresaService";
 import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 import { SucursalService } from "../../../services/SucursalService";
+import { SucuersalView } from "../../ui/SucursalView/SucursalView";
+import { FormSucursal } from "../../ui/FormSucursal/FormSucursal";
+import { FormEditSucursal } from "../../ui/FormEditSucursal/FormEditSucursal";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
@@ -18,29 +21,43 @@ export const Empresa = () => {
   const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
   const [sucursales, setSucursales] = useState<ISucursal[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Estado para el indicador de carga
+
   const [selectedViewEmpresa, setSelectedViewEmpresa] =
     useState<IEmpresa | null>(null);
   const [selectedEditEmpresa, setSelectedEditEmpresa] =
     useState<IEmpresa | null>(null);
+
+  const [selectedViewSucursal, setSelectedViewSucursal] =
+    useState<ISucursal | null>(null);
+
+  const [selectedEditSucursal, setSelectedEditSucursal] =
+    useState<ISucursal | null>(null);
+
   const [isFormEmpresaVisible, setIsFormEmpresaVisible] =
     useState<boolean>(false);
+  const [isFormSucursalVisible, setIsFormSucursalVisible] =
+    useState<boolean>(false);
 
-  const idEmpresa = Number(useParams().empresaId)
+  const idEmpresa = Number(useParams().empresaId);
   const empresaService = new EmpresaService();
   const sucursalService = new SucursalService();
 
   const toggleFormEmpresa = () => {
-    if (isFormEmpresaVisible) {
-    }
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
   };
+  const toggleFormSucursal = () => {
+    setIsFormSucursalVisible(!isFormSucursalVisible); // Función para mostrar el formulario
+  };
 
+  // Empresa view
   const handleEmpresClickView = (empresaClicked: IEmpresa) => {
     setSelectedViewEmpresa(empresaClicked);
   };
   const closeViewEmpresa = () => {
     setSelectedViewEmpresa(null);
   };
+
+  // Empresa edit
   const handleEmpresClickEdit = (empresaClicked: IEmpresa) => {
     setSelectedEditEmpresa(empresaClicked);
   };
@@ -48,7 +65,23 @@ export const Empresa = () => {
     setSelectedEditEmpresa(null);
   };
 
-  //traemos las empresas
+  // Sucursal view
+  const handleSucursalClickView = (sucursalClicked: ISucursal) => {
+    setSelectedViewSucursal(sucursalClicked);
+  };
+  const closeViewSucursal = () => {
+    setSelectedViewSucursal(null);
+  };
+
+  // Sucursal edit falrtasdfsldkfjkld
+  const handleSucursalClickEdit = (sucursalClicked: ISucursal) => {
+    setSelectedEditSucursal(sucursalClicked);
+  };
+  const closeEditSucursal = () => {
+    setSelectedEditSucursal(null);
+  };
+
+  // Traemos las empresas
   const traerEmpresas = async (): Promise<IEmpresa[]> => {
     try {
       const result = await empresaService.getAllEmpresas();
@@ -66,7 +99,7 @@ export const Empresa = () => {
       return result; // Devuelve los datos obtenidos
     } catch (error) {
       console.error("Error al buscar la empresa:", error);
-      return null ; // Devuelve un array vacío en caso de error
+      return null; // Devuelve un array vacío en caso de error
     }
   };
 
@@ -84,8 +117,7 @@ export const Empresa = () => {
   const fetchData = async () => {
     try {
       const result = await traerEmpresas(); // Trae todas las empresas y actualiza el estado
-      const resultEmpresa = idEmpresa ? await buscarEmpresa(idEmpresa) : null
-
+      const resultEmpresa = idEmpresa ? await buscarEmpresa(idEmpresa) : null;
 
       const resultSucursales = resultEmpresa?.id
         ? await traerSucursales(resultEmpresa.id)
@@ -114,6 +146,11 @@ export const Empresa = () => {
               <FormEmpresa onClose={toggleFormEmpresa} />
             </div>
           )}
+          {isFormSucursalVisible && (
+            <div className="overlay">
+              <FormSucursal onClose={toggleFormSucursal} empresa={empresa} />
+            </div>
+          )}
           {selectedViewEmpresa && (
             <div className="overlay">
               <EmpresaView
@@ -127,6 +164,23 @@ export const Empresa = () => {
               <FormEditEmpresa
                 empresa={selectedEditEmpresa}
                 onClose={closeEditEmpresa}
+              />
+            </div>
+          )}
+          {selectedViewSucursal && (
+            <div className="overlay">
+              <SucuersalView
+                sucursal={selectedViewSucursal}
+                onClose={closeViewSucursal}
+              />
+            </div>
+          )}
+          {selectedEditSucursal && (
+            <div className="overlay">
+              <FormEditSucursal
+                empresa={empresa}
+                sucursal={selectedEditSucursal}
+                onClose={closeEditSucursal}
               />
             </div>
           )}
@@ -151,14 +205,22 @@ export const Empresa = () => {
                 </h2>
               </div>
               <div className={styles.empresa__bottonContainer}>
-                <button className="add__button">Agregar sucursal</button>
+                <button className="add__button" onClick={toggleFormSucursal}>
+                  Agregar sucursal
+                </button>
               </div>
             </div>
             <div className={styles.empresa__content}>
               {sucursales && sucursales.length > 0 ? (
                 <div className={styles.empresa__cardsContainer}>
                   {sucursales.map((suc) => (
-                    <SucursalCard sucursal={suc} />
+                    <div style={{ width: "100%" }}>
+                      <SucursalCard
+                        sucursal={suc}
+                        onViewSucursalClick={handleSucursalClickView}
+                        onEditSucursalClick={handleSucursalClickEdit}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (
