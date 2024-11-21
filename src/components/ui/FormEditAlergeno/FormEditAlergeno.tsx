@@ -1,115 +1,113 @@
 import { useState } from "react";
+import { useFormOwn } from "../../../hooks/useFormOwn";
 import { Form, Row } from "react-bootstrap";
-import { useForm } from "../../../hooks/useForm";
-import styles from "./FormEditAlergeno.module.css";
-import { IAlergenos } from "../../../types/dtos/alergenos/IAlergenos";
-import { IUpdateAlergeno } from "../../../types/dtos/alergenos/IUpdateAlergeno";
 import { AlergenoService } from "../../../services/AlergenosService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
+import styles from "./FormEditAlergeno.module.css";
+import { IAlergenos } from "../../../types/dtos/alergenos/IAlergenos";
+import { IUpdateAlergeno } from "../../../types/dtos/alergenos/IUpdateAlergeno";
 
 interface FormEditAlergenoProps {
+  onClose: () => void;
   alergeno: IAlergenos;
-  onClose: () => void; // Prop para cerrar el formulario
 }
 
 export const FormEditAlergeno: React.FC<FormEditAlergenoProps> = ({
-  alergeno,
   onClose,
+  alergeno,
 }) => {
-  const [validated, setValidated] = useState<boolean>(false);
-  const [failTry, setFailTry] = useState<boolean>(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [failTry, setFailTry] = useState(false);
 
   const alergenoService = new AlergenoService();
 
-  const { values, handleChanges } = useForm({
+  const { values, handleChanges } = useFormOwn({
     denominacion: alergeno.denominacion,
-    imagen: alergeno.imagen?.url || "", // Inicializamos con la URL de la imagen si existe.
+    logo: alergeno.imagen ? alergeno.imagen.url : "",
   });
 
-  const { denominacion, imagen } = values;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!denominacion.trim()) {
-      setFailTry(true);
-      return;
-    }
-
-    const newUpdateAlergeno: IUpdateAlergeno = {
-      id: alergeno.id,
-      denominacion: denominacion,
-      imagen: imagen
-        ? {
-            name: imageFile?.name || "default-name",
-            url: imagen,
-          }
-        : null, // Construimos el objeto IImagen o enviamos null.
-    };
-
-    try {
-      await alergenoService.updateAlergeno(alergeno.id, newUpdateAlergeno);
-      setValidated(true);
-      onClose();
-    } catch (error) {
-      console.error("Error al actualizar el alergeno:", error);
-      setFailTry(true);
-    }
-  };
+  const { denominacion, logo } = values;
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setImageFile(file);
+      setImagen(file); // Actualiza el estado con el archivo seleccionado
       const url = URL.createObjectURL(file);
-      values.imagen = url; // Actualizamos la URL en el estado del formulario.
+      values.logo = url;
+    }
+    console.log(imagen);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (denominacion === "") {
+      setFailTry(true); // Activa el estado de error si el campo está vacío.
+      return;
+    }
+
+    const newAlergeno: IUpdateAlergeno = {
+      id: alergeno.id,
+      denominacion: denominacion,
+      imagen:
+        alergeno.imagen?.url === logo
+          ? alergeno.imagen
+          : { name: denominacion, url: logo },
+    };
+    try {
+      await alergenoService.updateAlergeno(alergeno.id, newAlergeno);
+      onClose();
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      setFailTry(true);
     }
   };
 
   return (
     <div className={styles.form__container}>
-      <h3>Editar Alergeno</h3>
+      <h3>Update Alérgeno</h3>
       <Form
         className={styles.form}
         noValidate
-        validated={validated}
         onSubmit={handleSubmit}
         autoComplete="off"
       >
         <Row className={styles.form__input}>
           <Form.Group className={styles.form__group} controlId="nameInput">
-            <Form.Label>Denominación</Form.Label>
+            <Form.Label>Nombre</Form.Label>
             <Form.Control
               className={`${
-                failTry && denominacion === "" ? "form__inputText-fail" : "form__inputText"
+                failTry && denominacion === ""
+                  ? "form__inputText-fail"
+                  : "form__inputText"
               }`}
               required
               type="text"
-              placeholder="Denominación"
-              onChange={handleChanges}
-              name="denominacion"
+              placeholder="Nombre del alérgeno"
               value={denominacion}
+              name="denominacion"
+              onChange={handleChanges}
             />
-            <Form.Control.Feedback>Correcto!</Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row className={styles.form__input}>
-          <Form.Group className={styles.form__groupImg} controlId="imageInput">
+          <Form.Group className={styles.form__groupImg} controlId="imageImput">
             <div className={styles.form__inputImgContainer}>
-              <Form.Label className={styles.form__selectImg}>Seleccionar Imagen</Form.Label>
+              <Form.Label className={styles.form__selectImg}>
+                Seleccionar Imagen
+              </Form.Label>
               <Form.Control
                 style={{ display: "none" }}
+                required
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
               />
             </div>
             <div className={styles.form__imgView}>
-              {imagen ? (
+              {values.logo !== "" ? (
                 <img
-                  src={imagen}
+                  src={values.logo}
                   alt="Miniatura"
                   style={{
                     width: "100%",
@@ -126,22 +124,14 @@ export const FormEditAlergeno: React.FC<FormEditAlergenoProps> = ({
         </Row>
         <div className={styles.form__buttonContainer}>
           <button className="add__button-green" type="submit">
-            Guardar
+            Confirmar
           </button>
-          <button className="add__button" onClick={onClose}>
-            Cerrar
+          <button className="add__button" type="button" onClick={onClose}>
+            Cancelar
           </button>
         </div>
-        <p
-          className={`${
-            failTry ? styles.login__errorMesajeVisivility : styles.login__errorMesaje
-          } `}
-        >
-          Error al guardar!
-        </p>
       </Form>
     </div>
   );
 };
-
 export default FormEditAlergeno;

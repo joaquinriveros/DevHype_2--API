@@ -31,6 +31,9 @@ export const Home = () => {
     setSelectedEditEmpresa(null);
   };
   const toggleFormEmpresa = () => {
+    if(isFormEmpresaVisible){
+      traerEmpresas()
+    }
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
   };
 

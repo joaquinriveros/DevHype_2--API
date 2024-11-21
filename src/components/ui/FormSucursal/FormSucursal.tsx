@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./FormSucursal.module.css";
-import { useForm } from "../../../hooks/useForm";
+import { useFormOwn } from "../../../hooks/useFormOwn";
 import { Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faImage } from "@fortawesome/free-solid-svg-icons";
@@ -44,7 +44,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
   const provinciaService = new ProvinciaService();
   const localidadService = new LocalidadService();
 
-  const { values, handleChanges } = useForm({
+  const { values, handleChanges } = useFormOwn({
     nombre: "",
 
     hsApertura: "00:00",
@@ -79,42 +79,8 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
     urlImg,
   } = values;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log(
-      "nombre:",
-      nombre,
-      "hsApertura:",
-      hsApertura,
-      "hsCierre:",
-      hsCierre,
-
-      "pais:",
-      pais,
-      "provincia:",
-      provincia,
-      "localidad:",
-      localidad,
-
-      "latitud:",
-      latitud,
-      "longitud:",
-      longitud,
-
-      "nombre calle:",
-      nombreCalle,
-      "numero calle:",
-      numeroCalle,
-      "codigo postal:",
-      cp,
-      "numero de piso:",
-      numeroPiso,
-      "numero de dpto:",
-      numeroDpto,
-
-      urlImg
-    );
 
     if (
       !nombre ||
@@ -154,9 +120,10 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
       logo: urlImg,
     };
 
-    sucursalService.createSucursal(newSucursal);
+    await sucursalService.createSucursal(newSucursal);
     setValidated(true);
     onClose();
+    console.log(image);
   };
 
   // handles
@@ -349,9 +316,20 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
                   gap: ".5rem",
                 }}
               >
-                <div className={styles.form__checkBox} onClick={()=>setIsCasaMatriz(!isCasaMatriz)}>
-                <FontAwesomeIcon icon={faCheck} color="var(--gray-color)" size="sm" style={isCasaMatriz? {transition: 'all .3s ease' ,opacity: '100%'} :{transition: 'all .3s ease' ,opacity: '0%'}}/>
-                  
+                <div
+                  className={styles.form__checkBox}
+                  onClick={() => setIsCasaMatriz(!isCasaMatriz)}
+                >
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    color="var(--gray-color)"
+                    size="sm"
+                    style={
+                      isCasaMatriz
+                        ? { transition: "all .3s ease", opacity: "100%" }
+                        : { transition: "all .3s ease", opacity: "0%" }
+                    }
+                  />
                 </div>
                 <p className={styles.form__cazaMatrizTxt}>Casa matriz</p>
               </Form.Group>
@@ -617,7 +595,7 @@ export const FormSucursal: React.FC<FormSucursalProps> = ({
           <button className="add__button-green" type="submit">
             Crear
           </button>
-          <button className="add__button" onClick={onClose}>
+          <button className="add__button" type="button" onClick={onClose}>
             Cerrar
           </button>
         </div>

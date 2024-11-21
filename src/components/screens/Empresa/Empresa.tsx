@@ -14,6 +14,7 @@ import { SucursalService } from "../../../services/SucursalService";
 import { SucuersalView } from "../../ui/SucursalView/SucursalView";
 import { FormSucursal } from "../../ui/FormSucursal/FormSucursal";
 import { FormEditSucursal } from "../../ui/FormEditSucursal/FormEditSucursal";
+import { ChargePage } from "../../ui/ChargePage/ChargePage";
 
 export const Empresa = () => {
   // Aca seria un listado de las empresas, pero todavia no esta asignado
@@ -42,10 +43,16 @@ export const Empresa = () => {
   const empresaService = new EmpresaService();
   const sucursalService = new SucursalService();
 
-  const toggleFormEmpresa = () => {
+  const toggleFormEmpresa = async () => {
+    if(isFormEmpresaVisible){
+      await fetchData()
+    }
     setIsFormEmpresaVisible(!isFormEmpresaVisible); // Función para mostrar el formulario
   };
-  const toggleFormSucursal = () => {
+  const toggleFormSucursal = async () => {
+    if(isFormSucursalVisible){
+      await fetchData()
+    }
     setIsFormSucursalVisible(!isFormSucursalVisible); // Función para mostrar el formulario
   };
 
@@ -73,7 +80,7 @@ export const Empresa = () => {
     setSelectedViewSucursal(null);
   };
 
-  // Sucursal edit falrtasdfsldkfjkld
+  // Sucursal edit 
   const handleSucursalClickEdit = (sucursalClicked: ISucursal) => {
     setSelectedEditSucursal(sucursalClicked);
   };
@@ -139,7 +146,7 @@ export const Empresa = () => {
 
   return (
     <>
-      {isLoading ? null : empresa ? ( // Mostrar un mensaje de carga mientras isLoading es true
+      {isLoading ? <ChargePage/> : empresa ? ( // Mostrar un mensaje de carga mientras isLoading es true
         <div className={"aside-main__container"}>
           {isFormEmpresaVisible && (
             <div className="overlay">
