@@ -37,4 +37,31 @@
   .alergeno__table {
     width: 100%;
   }
+
+.categoria__labelTittle{
+  display: flex;
+  justify-content: space-around;
+  padding: 0px 1rem;
+}
+.categoria__categories{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items:center;
+  justify-content:space-between;
+  font-size: large;
+  font-weight: 500;
+  padding: .5rem 1rem;
+}
+.subcategoriaContainer{
+  grid-column: span 2; /* Ocupará 2 columnas */
+  justify-content: center;
+  align-items: center;
+}
+/* Acciones */
+.categoria__actionContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
   
+}

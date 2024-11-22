@@ -148,57 +148,59 @@ export const Alergenos = () => {
           <button className="add__button" onClick={toggleFormAlergeno}>
             AGREGAR ALÉRGENO
           </button>
-          {/* <AlergenosListItem
-              alergenos={alergenos}
-              onViewAlergenoClick={handleAlergenoClickView}
-              onEditAlergenoClick={handleAlergenoClickEdit}
-            /> */}
         </div>
         <div className={styles.alergeno__content}>
           <div className={styles.alergeno__tableContainer}>
-            <table className={styles.alergeno__table}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: "center" }}>Nombre</th>
-                  <th style={{ width: "8rem", textAlign: "center" }}>
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+            <div className={styles.alergeno__table}>
+              <div className={styles.categoria__labelTittle}>
+                <div>
+                  <h3>Nombre</h3>
+                </div>
+                <div>
+                  <h3>Acciones</h3>
+                </div>
+              </div>
+
+              <div className={styles.categoria__categoriesContainer}>
                 {alergenos.map((aler) => (
-                  <tr key={aler.id}>
-                    <td style={{ textAlign: "center" }}>{aler.denominacion}</td>
-                    <td style={{ textAlign: "center" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          gap: ".5rem",
+                  <div
+                    className={`gradiantStyle__button ${styles.categoria__categories}`}
+                  >
+                    <span>{aler.denominacion}</span>
+
+                    <div className={styles.categoria__actionContainer}>
+                      <button
+                        className="boxStyle__icon"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAlergenoClickEdit(aler);
                         }}
                       >
-                        <button
-                          className="boxStyle__icon"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleAlergenoClickEdit(aler);
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faPen} />
-                        </button>
-                        <button className="boxStyle__icon" onClick={(event) => {
-                            event.stopPropagation();
-                            handleAlergenoClickView(aler);
-                          }}>
-                          <FontAwesomeIcon icon={faEye} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                        <FontAwesomeIcon icon={faPen} />
+                      </button>
+                      <button
+                        className="boxStyle__icon"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAlergenoClickView(aler);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faEye} />
+                      </button>
+                      <button
+                        className="boxStyle__iconRed"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAlergenoClickView(aler);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
