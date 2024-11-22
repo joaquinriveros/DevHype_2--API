@@ -18,6 +18,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import FormCategoria from "../../ui/FormCategoria/FormCategoria";
 import FormEditCategoria from "../../ui/FormEditCategoria/FormEditCategoria";
+import FormSubCategoria from "../../ui/FormSubCategoria/FormSubCategoria";
 
 export const Categorias = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -30,6 +31,8 @@ export const Categorias = () => {
   const [isFormCategoriaVisible, setIsFormCategoriaVisible] =
     useState<boolean>(false);
   const [selectedEditCategoria, setSelectedEditCategoria] =
+    useState<ICategorias | null>(null);
+  const [selectedSubCategoria, setSelectedSubCategoria] =
     useState<ICategorias | null>(null);
 
   const idEmpresa = Number(useParams().empresaId);
@@ -50,12 +53,22 @@ export const Categorias = () => {
   // Categoria edit
   const handleCategoriaClickEdit = (categoriaClicked: ICategorias) => {
     setSelectedEditCategoria(categoriaClicked);
+    console.log(categoriaClicked);
   };
   const closeEditCategoria = async () => {
     setSelectedEditCategoria(null); // Cierra el formulario
     await fetchData(); // Actualiza los datos después
   };
-  
+
+  // subCategoria
+  const handleSubCategoriaClick = (categoriaClicked: ICategorias) => {
+    setSelectedSubCategoria(categoriaClicked);
+    console.log(categoriaClicked);
+  };
+  const closeSubCategoria = async () => {
+    setSelectedSubCategoria(null); // Cierra el formulario
+    await fetchData(); // Actualiza los datos después
+  };
 
   // fetchs
   const fetchCategorias = async (idEmpresa: number) => {
@@ -70,7 +83,6 @@ export const Categorias = () => {
       return [];
     }
   };
-  
 
   const fetchEmpresa = async (idEmpresa: number) => {
     try {
@@ -111,7 +123,6 @@ export const Categorias = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  
 
   const handleToggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) => ({
@@ -141,6 +152,16 @@ export const Categorias = () => {
             <FormEditCategoria
               categoria={selectedEditCategoria}
               onClose={closeEditCategoria}
+            />
+          }
+        </div>
+      )}
+      {selectedSubCategoria && (
+        <div className="overlay">
+          {
+            <FormSubCategoria
+              categoriaPadre={selectedSubCategoria}
+              onClose={closeSubCategoria}
             />
           }
         </div>
@@ -218,9 +239,9 @@ export const Categorias = () => {
                         className={`boxStyle__icon ${
                           !expandedCategories[cat.id] ? styles.disabled : ""
                         }`}
-                        disabled={!expandedCategories[cat.id]}
                         onClick={(event) => {
                           event.stopPropagation();
+                          console.log("envio: ", cat);
                           handleCategoriaClickEdit(cat);
                         }}
                       >
@@ -231,7 +252,10 @@ export const Categorias = () => {
                         className={`boxStyle__icon ${
                           !expandedCategories[cat.id] ? styles.disabled : ""
                         }`}
-                        disabled={!expandedCategories[cat.id]}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleSubCategoriaClick(cat);
+                        }}
                       >
                         <FontAwesomeIcon icon={faFolderPlus} size="lg" />
                       </button>
@@ -259,7 +283,10 @@ export const Categorias = () => {
                                       ? styles.disabled
                                       : ""
                                   }`}
-                                  disabled={!expandedCategories[cat.id]}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleCategoriaClickEdit(subCat);
+                                  }}
                                 >
                                   <FontAwesomeIcon icon={faPen} size="lg" />
                                 </button>
