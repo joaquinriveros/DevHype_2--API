@@ -142,7 +142,7 @@ export const Empresa = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []); // Se ejecuta cada vez que cambia el cuit
+  }, [idEmpresa]); // Se ejecuta cada vez que cambia el cuit
 
   return (
     <>

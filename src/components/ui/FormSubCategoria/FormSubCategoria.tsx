@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { useFormOwn } from "../../../hooks/useFormOwn";
 import { Form, Row } from "react-bootstrap";
-import styles from "./FormEditCategoria.module.css";
+import styles from "./FormSubCategoria.module.css";
 import { CategoriaService } from "../../../services/CategoriaService";
+import { ICreateCategoria } from "../../../types/dtos/categorias/ICreateCategoria";
 import { useParams } from "react-router-dom";
 import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
-import { IUpdateCategoria } from "../../../types/dtos/categorias/IUpdateCategoria";
 
-interface FormEditCategoriaProps {
+interface FormAlergenoProps {
   onClose: () => void;
-  categoria: ICategorias
+  categoriaPadre: ICategorias
 }
 
-export const FormEditCategoria: React.FC<FormEditCategoriaProps> = ({ onClose, categoria }) => {
+export const FormSubCategoria: React.FC<FormAlergenoProps> = ({ onClose, categoriaPadre }) => {
   const [failTry, setFailTry] = useState(false);
 
   const idEmpresa = Number(useParams().empresaId);
   const categoriaService = new CategoriaService();
 
   const { values, handleChanges } = useFormOwn({
-    denominacion: categoria.denominacion,
+    denominacion: "",
   });
 
   const { denominacion } = values;
@@ -31,28 +31,23 @@ export const FormEditCategoria: React.FC<FormEditCategoriaProps> = ({ onClose, c
       return;
     }
 
-    const newupdateCategoria: IUpdateCategoria = {
-      id: categoria.id,
+    const newCategoria: ICreateCategoria = {
       idEmpresa: idEmpresa,
       denominacion: denominacion,
-      idCategoriaPadre: categoria.categoriaPadre? categoria.categoriaPadre.id : null,
-      eliminado: categoria.eliminado,
-      idSucursales: categoria.sucursales && categoria.sucursales.length > 0 ? categoria.sucursales.map((suc)=>(suc.id)) : []
+      idCategoriaPadre: categoriaPadre.id
     };
     try {
-      await categoriaService.updateCategoria(categoria.id, newupdateCategoria);
-      console.log(categoria)
-      console.log(newupdateCategoria)
+      await categoriaService.createCategoria(newCategoria);
       onClose();
     } catch (error) {
-      console.error("Error el edit de categoria:", error);
+      console.error("Error al crear la empresa:", error);
       setFailTry(true);
     }
   };
 
   return (
     <div className={styles.form__container}>
-      <h3>Crear Categoria</h3>
+      <h3>Crear Sub Categoria {categoriaPadre.denominacion}</h3>
       <Form
         className={styles.form}
         noValidate
@@ -89,4 +84,4 @@ export const FormEditCategoria: React.FC<FormEditCategoriaProps> = ({ onClose, c
     </div>
   );
 };
-export default FormEditCategoria;
+export default FormSubCategoria;
