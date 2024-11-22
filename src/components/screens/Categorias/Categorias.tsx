@@ -1,89 +1,79 @@
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styles from "./Categorias.module.css";
 import { AsideAdministracion } from "../../ui/AsideAdministracion/AsideAdministracion";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { ErrorPage } from "../../ui/ErrorPage/ErrorPage";
+import { CategoriaService } from "../../../services/CategoriaService";
+import { EmpresaService } from "../../../services/EmpresaService";
+import { SucursalService } from "../../../services/SucursalService";
+import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
-import { EmpresaService } from "../../../services/EmpresaService";
-import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
-import { SucursalService } from "../../../services/SucursalService";
-import { ProductoService } from "../../../services/ProductoService";
-import { CategoriaService } from "../../../services/CategoriaService";
+import { ChargePage } from "../../ui/ChargePage/ChargePage";
 
 export const Categorias = () => {
-  const [empresa, setEmpresa] = useState<null | IEmpresa>(null);
-  const [sucursal, setSucursal] = useState<null | ISucursal>(null);
-  const [categorias, setCategorias] = useState<null | ICategorias[]>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [empresa, setEmpresa] = useState<IEmpresa | null>(null);
+  const [sucursal, setSucursal] = useState<ISucursal | null>(null);
+  const [categorias, setCategorias] = useState<ICategorias[]>([]);
 
-  const empresaService = new EmpresaService();
-  const sucursalService = new SucursalService();
-  const productoService = new ProductoService();
-  const categoriaService = new CategoriaService();
   const idEmpresa = Number(useParams().empresaId);
   const idSucursal = Number(useParams().sucursalId);
 
-  // Buscamos la empresa
-  const buscarEmpresa = async (idEmpresa: number): Promise<IEmpresa | null> => {
-    try {
-      const result = await empresaService.getEmpresaById(idEmpresa);
-      return result; // Devuelve los datos obtenidos
-    } catch (error) {
-      console.error("Error al buscar la empresa:", error);
-      return null; // Devuelve un array vacío en caso de error
-    }
-  };
+  const categoriaService = new CategoriaService();
+  const empresaService = new EmpresaService();
+  const sucursalService = new SucursalService();
 
-  //traemos las sucursales
-  const buscarSucursal = async (
-    idSucursal: number
-  ): Promise<ISucursal | null> => {
+  const fetchCategorias = async (idEmpresa: number) => {
     try {
-      const result = await sucursalService.getSucursalById(idSucursal);
-      return result || null; // Devuelve los datos obtenidos
-    } catch (error) {
-      console.error("Error al buscar sucursales:", error);
-      return null; // Devuelve un array vacío en caso de error
-    }
-  };
-
-  // Obtener las categorias
-  const traerCategorias = async (
-    idSucursal: number
-  ): Promise<ICategorias[]> => {
-    try {
-      const result = await categoriaService.getAllCategoriaPorSucursal(
-        idSucursal
+      const result = await categoriaService.getAllCategoriaPorEmpresa(
+        idEmpresa
       );
-      return result || []; // Devuelve los datos obtenidos
+      return result || [];
     } catch (error) {
-      console.error("Error al buscar la empresa:", error);
-      return []; // Devuelve un array vacío en caso de error
+      console.error("Error al traer las categorías:", error);
+      return [];
     }
   };
 
-  // Traemos los datos de manera correcta
+  const fetchEmpresa = async (idEmpresa: number) => {
+    try {
+      return await empresaService.getEmpresaById(idEmpresa);
+    } catch (error) {
+      console.error("Error al traer la empresa:", error);
+      return null;
+    }
+  };
+
+  const fetchSucursal = async (idSucursal: number) => {
+    try {
+      return await sucursalService.getSucursalById(idSucursal);
+    } catch (error) {
+      console.error("Error al traer la sucursal:", error);
+      return null;
+    }
+  };
+
   const fetchData = async () => {
     try {
-      const resultEmpresa = idEmpresa ? await buscarEmpresa(idEmpresa) : null;
+      if (!idEmpresa || !idSucursal) {
+        throw new Error("IDs de empresa o sucursal no válidos");
+      }
 
-      const resultSucursal = idSucursal
-        ? await buscarSucursal(idSucursal)
-        : null;
+      const [resultCategorias, resultEmpresa, resultSucursal] =
+        await Promise.all([
+          fetchCategorias(idEmpresa),
+          fetchEmpresa(idEmpresa),
+          fetchSucursal(idSucursal),
+        ]);
 
-      const resultCategorias = idSucursal
-        ? await traerCategorias(idSucursal)
-        : [];
-
+      setCategorias(resultCategorias);
       setEmpresa(resultEmpresa);
       setSucursal(resultSucursal);
-      setCategorias(resultCategorias);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
-      setEmpresa(null); // En caso de error, setea empresa como null
     } finally {
-      setIsLoading(false); // Oculta el mensaje de carga al finalizar
+      setIsLoading(false);
     }
   };
 
@@ -92,27 +82,49 @@ export const Categorias = () => {
   }, []);
 
   if (isLoading) {
-    return null; // O puedes mostrar un spinner aquí si prefieres
+    return <ChargePage />;
   }
-  return empresa !== null && sucursal !== null ? (
+
+  if (!empresa || !sucursal) {
+    return <ErrorPage mesaje="Pagina no encontrada" />;
+  }
+
+  return (
     <div className={"aside-main__container"}>
       <AsideAdministracion empresa={empresa} sucursal={sucursal} />
 
       <div className={styles.categoria__body}>
         <div className={styles.categoria__header}>
-          <div className={styles.categoria__filterContainer}>Categorías:</div>
-          <div>
-            <button className="add__button">AGREGAR UN PRODUCTO</button>
-          </div>
+          <h4>{`Cstegorias de ${empresa.nombre}`}</h4>
+          <button className="add__button">AGREGAR CATEGORÍA</button>
         </div>
+
         <div className={styles.categoria__content}>
-          <div className={styles.categoria__itemsContainer}>
-            <h1>funciona</h1>
+          <div className={styles.categoria__tableContainer}>
+            {/* tabla de productos */}
+            <table className={styles.categoria__table}>
+              <thead>
+                <tr>
+                  <th style={{ width: "1fr" }}>Nombre</th>
+                  <th style={{ width: "1fr", textAlign: "right" }}>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categorias &&
+                  categorias
+                    .filter((cat) => {
+                      !cat.categoriaPadre;
+                    }) // Filtra las categorías principales
+                    .map((cat) => (
+                      <tr key={cat.id}>
+                        <td>{cat.denominacion}</td>
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
-  ) : (
-    <ErrorPage mesaje="Pagina no encontrada" />
   );
 };
