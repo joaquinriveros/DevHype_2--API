@@ -120,4 +120,25 @@ export class ProductoService extends BackendClient<IProductos | ICreateProducto 
             console.error(error);
         }
     }
+
+    async deleteProducto(idProducto: number): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/${idProducto}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ eliminado: true }), // Actualiza el campo eliminado
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error al marcar el producto con ID ${idProducto} como eliminado`);
+            }
+    
+            console.log(`Producto con ID ${idProducto} marcado como eliminado exitosamente.`);
+        } catch (error) {
+            console.error(`Error al intentar eliminar el producto con ID ${idProducto}:`, error);
+            throw error;
+        }
+    }
 }

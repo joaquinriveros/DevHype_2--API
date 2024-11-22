@@ -29,7 +29,7 @@ export class CategoriaService extends BackendClient<ICategorias | ICreateCategor
 
     async getAllCategoriaPorEmpresa(idEmpresa: number): Promise<ICategorias[] | null> {
         try {
-            const response = await fetch(`${API_URL}/allCategoriasPorEmpresa/${idEmpresa}`, {
+            const response = await fetch(`${this.baseUrl}/allCategoriasPorEmpresa/${idEmpresa}`, {
                 method: "GET",
             });
 
