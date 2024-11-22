@@ -21,6 +21,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ChargePage } from "../../ui/ChargePage/ChargePage";
 import { FormProducto } from "../../ui/FormProducto/FormProducto";
+import { FormEditProducto } from "../../ui/FormEditProducto/FormEditProducto";
+import { ProductoView } from "../../ui/ProductoView/ProductoView";
+import { DeletePopUp } from "../../ui/DeletePopUp/DeletePopUp";
 
 export const Productos = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -42,33 +45,46 @@ export const Productos = () => {
     useState<IProductos | null>(null);
   const [selectedEditProducto, setSelectedEditProducto] =
     useState<IProductos | null>(null);
+  const [selectedDeleteProducto, setSelectedDeleteProducto] =
+    useState<IProductos | null>(null);
   const [isFormProductoVisible, setIsFormProductoVisible] =
     useState<boolean>(false);
 
-// Alergeno form
-const toggleFormProducto = async () => {
-  if (isFormProductoVisible) {
+  // Alergeno form
+  const toggleFormProducto = async () => {
+    if (isFormProductoVisible) {
+      await fetchData();
+    }
+    setIsFormProductoVisible(!isFormProductoVisible); // Función para mostrar el formulario
+  };
+
+  
+
+  // Producto delete
+  const handleProductoClickDelete = (productoClicked: IProductos) => {
+    setSelectedDeleteProducto(productoClicked);
+  };
+  const closeDeleteProducto = async() => {
     await fetchData();
-  }
-  setIsFormProductoVisible(!isFormProductoVisible); // Función para mostrar el formulario
-};
+    setSelectedDeleteProducto(null);
+  };
 
-// Producto view
-const handleProductoClickView = (productoClicked: IProductos) => {
-  setSelectedViewProducto(productoClicked);
-};
-const closeViewProducto = () => {
-  setSelectedViewProducto(null);
-};
+  // Producto view
+  const handleProductoClickView = (productoClicked: IProductos) => {
+    setSelectedViewProducto(productoClicked);
+  };
+  const closeViewProducto = () => {
+    setSelectedViewProducto(null);
+  };
 
-// Producto edit
-const handleProductoClickEdit = (productoClicked: IProductos) => {
-  setSelectedEditProducto(productoClicked);
-};
-const closeEditProducto = async () => {
-  await fetchData();
-  await setSelectedEditProducto(null);
-};
+  // Producto edit
+  const handleProductoClickEdit = (productoClicked: IProductos) => {
+    setSelectedEditProducto(productoClicked);
+  };
+  const closeEditProducto = async () => {
+    await fetchData();
+    await setSelectedEditProducto(null);
+  };
 
   // Buscamos la empresa
   const buscarEmpresa = async (idEmpresa: number): Promise<IEmpresa | null> => {
@@ -174,24 +190,33 @@ const closeEditProducto = async () => {
     <div className={"aside-main__container"}>
       {isFormProductoVisible && (
         <div className="overlay">
-          <FormProducto categorias={categorias} onClose={toggleFormProducto}  />
+          <FormProducto categorias={categorias} onClose={toggleFormProducto} />
+        </div>
+      )}
+      {selectedDeleteProducto && (
+        <div className="overlay">
+          <DeletePopUp producto={selectedDeleteProducto} onClose={closeDeleteProducto} />
         </div>
       )}
       {selectedViewProducto && (
         <div className="overlay">
-          {/* <ProductoView
-            Producto={selectedViewProducto}
-            onClose={closeViewProducto}
-          /> */}
+          {
+            <ProductoView
+              producto={selectedViewProducto}
+              onClose={closeViewProducto}
+            />
+          }
         </div>
       )}
       {selectedEditProducto && (
         <div className="overlay">
-          {/* <FormEditProducto
-            categorias={categorias}
-            producto={selectedEditProducto}
-            onClose={closeEditProducto}
-          /> */}
+          {
+            <FormEditProducto
+              categorias={categorias}
+              producto={selectedEditProducto}
+              onClose={closeEditProducto}
+            />
+          }
         </div>
       )}
 
@@ -226,7 +251,9 @@ const closeEditProducto = async () => {
             </div>
           </div>
           <div>
-            <button className="add__button" onClick={toggleFormProducto}>Agregar Producto</button>
+            <button className="add__button" onClick={toggleFormProducto}>
+              Agregar Producto
+            </button>
           </div>
         </div>
 
@@ -241,63 +268,82 @@ const closeEditProducto = async () => {
                   <th style={{ width: "20rem" }}>Descripción</th>
                   <th>Categoría</th>
                   <th>Estado</th>
-                  <th style={{ width: "8rem" }}>Acciones</th>
+                  <th style={{ width: "8rem", textAlign: "center" }}>
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {productsFiltered.map((prod, index) => (
-                  <tr key={index}>
-                    <td>{prod.denominacion}</td>
-                    <td>${prod.precioVenta}</td>
-                    <td>{prod.descripcion}</td>
-                    <td>{prod.categoria.denominacion}</td>
-                    <td>
-                      {prod.habilitado ? (
+                {productsFiltered
+                  .filter((prod) => !prod.eliminado) // Filtra los productos no eliminados
+                  .map((prod, index) => (
+                    <tr key={index}>
+                      <td>{prod.denominacion}</td>
+                      <td>${prod.precioVenta}</td>
+                      <td>{prod.descripcion}</td>
+                      <td>{prod.categoria.denominacion}</td>
+                      <td>
+                        {prod.habilitado ? (
+                          <div
+                            className="boxStyle__iconGreen"
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faCheck} size="xl" />
+                          </div>
+                        ) : (
+                          <div
+                            className="boxStyle__iconRed"
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faX} size="xl" />
+                          </div>
+                        )}
+                      </td>
+                      <td>
                         <div
-                          className="boxStyle__iconGreen"
                           style={{
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
+                            gap: ".5rem",
                           }}
                         >
-                          <FontAwesomeIcon icon={faCheck} size="xl" />
+                          <button
+                            className="boxStyle__icon"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleProductoClickEdit(prod);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPen} />
+                          </button>
+                          <button
+                            className="boxStyle__icon"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleProductoClickView(prod);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faEye} />
+                          </button>
+                          <button className="boxStyle__iconRed" onClick={(event) => {
+                              event.stopPropagation();
+                              handleProductoClickDelete(prod);
+                            }}>
+                            <FontAwesomeIcon icon={faTrashCan} />
+                          </button>
                         </div>
-                      ) : (
-                        <div
-                          className="boxStyle__iconRed"
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faX} size="xl" />
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          gap: ".5rem",
-                        }}
-                      >
-                        <button className="boxStyle__icon">
-                          <FontAwesomeIcon icon={faPen} />
-                        </button>
-                        <button className="boxStyle__icon">
-                          <FontAwesomeIcon icon={faEye} />
-                        </button>
-                        <button className="boxStyle__iconRed">
-                          <FontAwesomeIcon icon={faTrashCan} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
